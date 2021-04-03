@@ -30,6 +30,8 @@
     ],
     "rules": {
       "no-unused-expressions": "off",
+      "no-param-reassign": "off",
+      "no-empty": "off",
       "react/prop-types": "off",
       "react/jsx-props-no-spreading": "off",
       "react-hooks/rules-of-hooks": "error",

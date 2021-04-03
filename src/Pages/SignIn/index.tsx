@@ -1,6 +1,7 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
+import { toast } from 'react-toastify';
 import {
   Box,
   Flex,
@@ -11,8 +12,11 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react';
 
-import Sponsors from 'Components/Sponsors';
 import Input from 'Components/Input';
+import Sponsors from 'Components/Sponsors';
+import api from 'Services/api';
+import signInSchema from 'Schemas/signIn';
+import handleErrors from 'Helpers/handleErrors';
 
 interface ISignInFormData {
   email: string;
@@ -30,10 +34,25 @@ const SignIn: React.FC = () => {
   const [loadingSignIn, setLoadingSignIn] = useState(false);
 
   // Callbacks
-  const handleSignIn = useCallback((data: ISignInFormData) => {
-    console.log(data);
-    signInFormRef.current?.setFieldError('password', 'email error');
-  }, []);
+  const handleSignIn = useCallback(
+    async (data: ISignInFormData) => {
+      try {
+        if (loadingSignIn) return;
+        setLoadingSignIn(true);
+        signInFormRef.current?.setErrors({});
+        await signInSchema.validate(data, {
+          abortEarly: false,
+        });
+        await api.post('/users/signin', data);
+        toast.success('You are in!');
+      } catch (err) {
+        handleErrors(err, signInFormRef);
+      } finally {
+        setLoadingSignIn(false);
+      }
+    },
+    [loadingSignIn, signInFormRef],
+  );
 
   return (
     <Box h="100vh" p="25px">
