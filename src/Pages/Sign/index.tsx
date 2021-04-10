@@ -22,12 +22,16 @@ const SignIn: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [activeForm, setActiveForm] = useState<IAvailableForms>('SignIn');
 
-  const handleChangeForm = useCallback((form: IAvailableForms) => {
-    setShowForm(false);
-    setTimeout(() => {
-      setActiveForm(form);
-    }, 100);
-  }, []);
+  const handleChangeForm = useCallback(
+    (form: IAvailableForms) => {
+      if (!showForm) return;
+      setShowForm(false);
+      setTimeout(() => {
+        setActiveForm(form);
+      }, 100);
+    },
+    [showForm],
+  );
 
   useEffect(() => {
     setTimeout(() => {
@@ -47,9 +51,10 @@ const SignIn: React.FC = () => {
           borderStartRadius={!showSponsors ? '5px' : ''}
         >
           <Switch
-            position="absolute"
             top="20px"
             right="20px"
+            position="absolute"
+            loading={!showForm}
             leftText="Sign In"
             rightText="Sign Up"
             onChange={active =>
