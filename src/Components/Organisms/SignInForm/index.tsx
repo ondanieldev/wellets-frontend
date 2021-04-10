@@ -2,7 +2,6 @@ import React, { useRef, useState, useCallback } from 'react';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import { Stack, Button } from '@chakra-ui/react';
-import { toast } from 'react-toastify';
 
 import Input from 'Components/Atoms/Input';
 
@@ -30,7 +29,6 @@ const SignInForm: React.FC = () => {
           abortEarly: false,
         });
         await signIn(data);
-        toast.success('You are in!');
       } catch (err) {
         handleErrors(err, signInFormRef);
       } finally {
