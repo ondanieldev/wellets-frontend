@@ -29,6 +29,8 @@
         "prettier"
     ],
     "rules": {
+      "camelcase": "off",
+      "react/jsx-curly-newline": "off",
       "no-unused-expressions": "off",
       "no-param-reassign": "off",
       "no-empty": "off",
