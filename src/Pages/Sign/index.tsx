@@ -9,10 +9,10 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react';
 
-import Switch from 'Components/Switch';
-import Sponsors from 'Components/Sponsors';
-import SignInForm from 'Components/SignPage/SignInForm';
-import SignUpForm from 'Components/SignPage/SignUpForm';
+import Switch from 'Components/Atoms/Switch';
+import Sponsors from 'Components/Organisms/Sponsors';
+import SignInForm from 'Components/Organisms/SignInForm';
+import SignUpForm from 'Components/Organisms/SignUpForm';
 
 type IAvailableForms = 'SignIn' | 'SignUp';
 
@@ -22,12 +22,16 @@ const SignIn: React.FC = () => {
   const [showForm, setShowForm] = useState(false);
   const [activeForm, setActiveForm] = useState<IAvailableForms>('SignIn');
 
-  const handleChangeForm = useCallback((form: IAvailableForms) => {
-    setShowForm(false);
-    setTimeout(() => {
-      setActiveForm(form);
-    }, 100);
-  }, []);
+  const handleChangeForm = useCallback(
+    (form: IAvailableForms) => {
+      if (!showForm) return;
+      setShowForm(false);
+      setTimeout(() => {
+        setActiveForm(form);
+      }, 100);
+    },
+    [showForm],
+  );
 
   useEffect(() => {
     setTimeout(() => {
@@ -47,9 +51,10 @@ const SignIn: React.FC = () => {
           borderStartRadius={!showSponsors ? '5px' : ''}
         >
           <Switch
-            position="absolute"
             top="20px"
             right="20px"
+            position="absolute"
+            loading={!showForm}
             leftText="Sign In"
             rightText="Sign Up"
             onChange={active =>

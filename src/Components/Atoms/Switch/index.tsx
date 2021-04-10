@@ -6,6 +6,7 @@ import { LeftButton, RightButton } from './styles';
 type IButton = 'left' | 'right';
 
 interface ISwitchProps extends Omit<BoxProps, 'onChange'> {
+  loading?: boolean;
   leftText: string;
   rightText: string;
   defaultActive?: IButton;
@@ -13,6 +14,7 @@ interface ISwitchProps extends Omit<BoxProps, 'onChange'> {
 }
 
 const Switch: React.FC<ISwitchProps> = ({
+  loading,
   leftText,
   rightText,
   defaultActive,
@@ -23,12 +25,13 @@ const Switch: React.FC<ISwitchProps> = ({
 
   const handleClick = useCallback(
     (newActive: IButton) => {
+      if (loading || active === newActive) return;
       setActive(newActive);
       if (onChange) {
         onChange(newActive);
       }
     },
-    [onChange],
+    [onChange, loading, active],
   );
 
   return (

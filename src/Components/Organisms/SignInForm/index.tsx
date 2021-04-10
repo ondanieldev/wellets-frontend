@@ -4,24 +4,24 @@ import { FormHandles } from '@unform/core';
 import { Stack, Button } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
 
-import Input from 'Components/Input';
+import Input from 'Components/Atoms/Input';
+
+import ISignInDTO from 'DTOs/ISignInDTO';
+
+import { useAuth } from 'Hooks/auth';
 
 import signInSchema from 'Schemas/signIn';
 import handleErrors from 'Helpers/handleErrors';
-import api from 'Services/api';
-
-interface ISignInFormData {
-  email: string;
-  password: string;
-}
 
 const SignInForm: React.FC = () => {
+  const { signIn } = useAuth();
+
   const signInFormRef = useRef<FormHandles>(null);
 
   const [loadingSignIn, setLoadingSignIn] = useState(false);
 
   const handleSignIn = useCallback(
-    async (data: ISignInFormData) => {
+    async (data: ISignInDTO) => {
       try {
         if (loadingSignIn) return;
         setLoadingSignIn(true);
@@ -29,7 +29,7 @@ const SignInForm: React.FC = () => {
         await signInSchema.validate(data, {
           abortEarly: false,
         });
-        await api.post('/users/signin', data);
+        await signIn(data);
         toast.success('You are in!');
       } catch (err) {
         handleErrors(err, signInFormRef);
@@ -37,7 +37,7 @@ const SignInForm: React.FC = () => {
         setLoadingSignIn(false);
       }
     },
-    [loadingSignIn, signInFormRef],
+    [loadingSignIn, signInFormRef, signIn],
   );
 
   return (
