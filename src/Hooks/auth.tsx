@@ -17,7 +17,7 @@ import api from 'Services/api';
 const AuthContext = createContext<IAuthContextData>({} as IAuthContextData);
 
 interface IAuthContextData {
-  user: IUser;
+  user: IUser | null;
   signIn: (data: ISignInDTO) => Promise<void>;
   signOut: () => Promise<void>;
   handleSetUser: (data: IUser) => void;
@@ -26,7 +26,7 @@ interface IAuthContextData {
 export const AuthProvider: React.FC = ({ children }) => {
   const history = useHistory();
 
-  const [user, setUser] = useState<IUser>({} as IUser);
+  const [user, setUser] = useState<IUser | null>(null);
 
   const signIn = useCallback(async ({ email, password }: ISignInDTO) => {
     const response = await api.post('/users/sessions', {
@@ -43,15 +43,13 @@ export const AuthProvider: React.FC = ({ children }) => {
   const signOut = useCallback(async () => {
     await api.delete('/users/signout');
     localStorage.removeItem(localStorageConfig.user_identifier);
-    setUser({} as IUser);
+    setUser(null);
     history.replace('/');
   }, [history]);
 
   const handleSetUser = useCallback(
     (data: IUser) => {
-      const newUser = { ...user };
-      Object.assign(newUser, data);
-      setUser(newUser);
+      setUser(data);
       localStorage.setItem(
         localStorageConfig.user_identifier,
         JSON.stringify(user),
