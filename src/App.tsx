@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import Routes from 'Routes';
+import Providers from 'Hooks';
 import theme from 'Styles/theme';
 
 toast.configure();
@@ -13,7 +14,9 @@ function App(): JSX.Element {
   return (
     <Router>
       <ChakraProvider theme={theme}>
-        <Routes />
+        <Providers>
+          <Routes />
+        </Providers>
       </ChakraProvider>
     </Router>
   );

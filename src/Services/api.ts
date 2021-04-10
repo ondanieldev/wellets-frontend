@@ -1,19 +1,19 @@
 import axios from 'axios';
 
-const env = process.env.NEXT_PUBLIC_KOINZAAR_ENV;
+import localStorageConfig from 'Config/localStorage';
 
-export const TOKEN_ITEM_NAME = '@Koinzaar:token';
-
-export const getAuthToken = (): string | null => {
-  return localStorage.getItem(TOKEN_ITEM_NAME);
+const getAuthToken = (): string | null => {
+  const user = localStorage.getItem(localStorageConfig.user_identifier);
+  if (!user) return null;
+  const parsedUser = JSON.parse(user);
+  if (!parsedUser.token) return null;
+  return parsedUser.token;
 };
 
-export const setAuthToken = (token: string): void => {
-  return localStorage.setItem(TOKEN_ITEM_NAME, token);
-};
-
-export const backendURL =
-  env === 'production' ? 'http://localhost:3334' : 'http://localhost:3333';
+const backendURL =
+  process.env.NODE_ENV === 'production'
+    ? 'http://localhost:3334'
+    : 'http://localhost:3333';
 
 const api = axios.create({
   baseURL: backendURL,
@@ -22,7 +22,6 @@ const api = axios.create({
 api.interceptors.request.use(config => {
   try {
     const token = getAuthToken();
-
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

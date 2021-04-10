@@ -6,15 +6,11 @@ import { toast } from 'react-toastify';
 
 import Input from 'Components/Atoms/Input';
 
+import ISignUpDTO from 'DTOs/ISignUpDTO';
+
 import signUpSchema from 'Schemas/signUp';
 import handleErrors from 'Helpers/handleErrors';
 import api from 'Services/api';
-
-interface ISignUpFormData {
-  email: string;
-  password: string;
-  confirm_password?: string;
-}
 
 interface IProps {
   onSuccess: () => void;
@@ -26,7 +22,7 @@ const SignUpForm: React.FC<IProps> = ({ onSuccess }) => {
   const [loadingSignUp, setLoadingSignUp] = useState(false);
 
   const handleSignUp = useCallback(
-    async (data: ISignUpFormData) => {
+    async (data: ISignUpDTO) => {
       try {
         if (loadingSignUp) return;
         setLoadingSignUp(true);
@@ -35,7 +31,7 @@ const SignUpForm: React.FC<IProps> = ({ onSuccess }) => {
           abortEarly: false,
         });
         delete data.confirm_password;
-        await api.post('/users/signup', data);
+        await api.post('/users', data);
         toast.success('Your account was successfully created!');
         onSuccess();
       } catch (err) {
