@@ -4,7 +4,7 @@ import { FormHandles } from '@unform/core';
 import { Stack, Button } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
 
-import Input from 'Components/Input';
+import Input from 'Components/Atoms/Input';
 
 import signInSchema from 'Schemas/signIn';
 import handleErrors from 'Helpers/handleErrors';

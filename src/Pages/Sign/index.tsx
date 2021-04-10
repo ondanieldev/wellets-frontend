@@ -9,10 +9,10 @@ import {
   useBreakpointValue,
 } from '@chakra-ui/react';
 
-import Switch from 'Components/Switch';
-import Sponsors from 'Components/Sponsors';
-import SignInForm from 'Components/SignPage/SignInForm';
-import SignUpForm from 'Components/SignPage/SignUpForm';
+import Switch from 'Components/Atoms/Switch';
+import Sponsors from 'Components/Organisms/Sponsors';
+import SignInForm from 'Components/Organisms/SignInForm';
+import SignUpForm from 'Components/Organisms/SignUpForm';
 
 type IAvailableForms = 'SignIn' | 'SignUp';
 
