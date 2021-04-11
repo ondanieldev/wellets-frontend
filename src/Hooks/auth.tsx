@@ -41,7 +41,9 @@ export const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   const signOut = useCallback(async () => {
-    await api.delete('/users/signout');
+    try {
+      await api.delete('/users/signout');
+    } catch {}
     localStorage.removeItem(localStorageConfig.user_identifier);
     setUser(null);
     history.replace('/');
