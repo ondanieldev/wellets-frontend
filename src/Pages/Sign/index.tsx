@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
-  Flex,
   Stack,
   Center,
   Heading,
@@ -10,6 +9,8 @@ import {
 } from '@chakra-ui/react';
 
 import Switch from 'Components/Atoms/Switch';
+import PageContainer from 'Components/Atoms/PageContainer';
+import ContentContainer from 'Components/Atoms/ContentContainer';
 import Sponsors from 'Components/Organisms/Sponsors';
 import SignInForm from 'Components/Organisms/SignInForm';
 import SignUpForm from 'Components/Organisms/SignUpForm';
@@ -40,8 +41,8 @@ const SignIn: React.FC = () => {
   }, [activeForm]);
 
   return (
-    <Box h="100vh" p="25px">
-      <Flex h="100%">
+    <PageContainer>
+      <ContentContainer>
         {showSponsors && <Sponsors />}
         <Box
           w="100%"
@@ -78,8 +79,8 @@ const SignIn: React.FC = () => {
             </Stack>
           </Center>
         </Box>
-      </Flex>
-    </Box>
+      </ContentContainer>
+    </PageContainer>
   );
 };
 
