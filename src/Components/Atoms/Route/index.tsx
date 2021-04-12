@@ -5,6 +5,8 @@ import {
   Redirect,
 } from 'react-router-dom';
 
+import { useAuth } from 'Hooks/auth';
+
 import localStorageConfig from 'Config/localStorage';
 
 interface RouteProps extends ReactDOMRouteProps {
@@ -17,9 +19,12 @@ const Route: React.FC<RouteProps> = ({
   component: Component,
   ...rest
 }) => {
+  const { user: storeUser } = useAuth();
+
   const user = useMemo(
     () => localStorage.getItem(localStorageConfig.user_identifier),
-    [],
+    // eslint-disable-next-line
+    [storeUser],
   );
 
   return (
