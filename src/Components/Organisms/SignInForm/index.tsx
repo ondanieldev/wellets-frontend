@@ -1,9 +1,10 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
-import { Stack, Button } from '@chakra-ui/react';
+import { Stack } from '@chakra-ui/react';
 
 import Input from 'Components/Atoms/Input';
+import Button from 'Components/Atoms/Button';
 
 import ISignInDTO from 'DTOs/ISignInDTO';
 
@@ -52,13 +53,7 @@ const SignInForm: React.FC = () => {
           type="password"
           placeholder="Enter your password"
         />
-        <Button
-          type="submit"
-          variant="outline"
-          colorScheme="green"
-          loadingText="Loading"
-          isLoading={loadingSignIn}
-        >
+        <Button type="submit" isLoading={loadingSignIn} isPrimary>
           Sign In
         </Button>
       </Stack>
