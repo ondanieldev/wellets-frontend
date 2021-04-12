@@ -1,3 +1,5 @@
+import IWallet from './IWallet';
+
 interface IUser {
   id: string;
   email: string;
@@ -5,7 +7,7 @@ interface IUser {
   token?: string;
   created_at: Date;
   updated_at: Date;
-  // wallets: Wallet[];
+  wallets: IWallet[];
 }
 
 export default IUser;
