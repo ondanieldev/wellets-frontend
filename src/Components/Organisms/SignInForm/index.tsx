@@ -1,8 +1,8 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import { Stack } from '@chakra-ui/react';
 
+import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
 import Button from 'Components/Atoms/Button';
 
@@ -41,22 +41,20 @@ const SignInForm: React.FC = () => {
 
   return (
     <Form ref={signInFormRef} onSubmit={handleSignIn}>
-      <Stack spacing="40px">
-        <Input
-          name="email"
-          type="email"
-          placeholder="Enter your e-mail"
-          helper="We'll never share your email."
-        />
-        <Input
-          name="password"
-          type="password"
-          placeholder="Enter your password"
-        />
-        <Button type="submit" isLoading={loadingSignIn} isPrimary>
-          Sign In
-        </Button>
-      </Stack>
+      <Input
+        name="email"
+        type="email"
+        placeholder="Enter your e-mail"
+        helper="We'll never share your email."
+      />
+      <Input
+        name="password"
+        type="password"
+        placeholder="Enter your password"
+      />
+      <Button type="submit" isLoading={loadingSignIn} isPrimary>
+        Sign In
+      </Button>
     </Form>
   );
 };

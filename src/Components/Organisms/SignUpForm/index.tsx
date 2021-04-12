@@ -1,9 +1,9 @@
 import React, { useRef, useState, useCallback } from 'react';
-import { Form } from '@unform/web';
 import { FormHandles } from '@unform/core';
 import { Stack, Button } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
 
+import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
 
 import ISignUpDTO from 'DTOs/ISignUpDTO';
@@ -45,33 +45,31 @@ const SignUpForm: React.FC<IProps> = ({ onSuccess }) => {
 
   return (
     <Form ref={signUpFormRef} onSubmit={handleSignUp}>
-      <Stack spacing="40px">
-        <Input
-          name="email"
-          type="email"
-          placeholder="Enter your e-mail"
-          helper="We'll never share your email."
-        />
-        <Input
-          name="password"
-          type="password"
-          placeholder="Enter your password"
-        />
-        <Input
-          name="confirm_password"
-          type="password"
-          placeholder="Confirm your password"
-        />
-        <Button
-          type="submit"
-          variant="outline"
-          colorScheme="green"
-          loadingText="Loading"
-          isLoading={loadingSignUp}
-        >
-          Sign Up
-        </Button>
-      </Stack>
+      <Input
+        name="email"
+        type="email"
+        placeholder="Enter your e-mail"
+        helper="We'll never share your email."
+      />
+      <Input
+        name="password"
+        type="password"
+        placeholder="Enter your password"
+      />
+      <Input
+        name="confirm_password"
+        type="password"
+        placeholder="Confirm your password"
+      />
+      <Button
+        type="submit"
+        variant="outline"
+        colorScheme="green"
+        loadingText="Loading"
+        isLoading={loadingSignUp}
+      >
+        Sign Up
+      </Button>
     </Form>
   );
 };
