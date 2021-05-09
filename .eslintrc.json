@@ -29,6 +29,7 @@
         "prettier"
     ],
     "rules": {
+      "react/no-array-index-key": "off",
       "camelcase": "off",
       "react/jsx-curly-newline": "off",
       "no-unused-expressions": "off",

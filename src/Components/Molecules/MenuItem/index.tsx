@@ -42,7 +42,7 @@ const MenuItem: React.FC<IProps> = ({ icon, items, palette, title, link }) => {
           </Heading>
           <List spacing={2}>
             {items.map(item => (
-              <ListItem>
+              <ListItem key={item}>
                 <ListIcon as={FiCheckCircle} color={palette[2]} />
                 {item}
               </ListItem>

@@ -33,10 +33,7 @@ const Icon: React.FC<IProps> = ({ name, color }) => {
           await import(`..\\..\\..\\Assets\\Icons\\${name}.svg`)
         ).default;
       }
-    } catch {
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) {}
   }, [name]);
 
   useEffect(() => {
