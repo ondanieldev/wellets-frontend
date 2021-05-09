@@ -19,7 +19,7 @@ const Button: React.FC<IProps> = ({ isPrimary, ...rest }) => {
       ) : (
         <BaseButton
           variant="outline"
-          colorScheme="red"
+          colorScheme="white"
           loadingText="Loading"
           {...rest}
         />

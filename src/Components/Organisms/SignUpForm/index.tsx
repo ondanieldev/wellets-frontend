@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { FormHandles } from '@unform/core';
-import { Stack, Button } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import { toast } from 'react-toastify';
 
 import Form from 'Components/Atoms/Form';

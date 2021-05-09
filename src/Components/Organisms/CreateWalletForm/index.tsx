@@ -20,7 +20,11 @@ import api from 'Services/api';
 import createWallet from 'Schemas/createWallet';
 import handleErrors from 'Helpers/handleErrors';
 
-const CreateWalletForm: React.FC = () => {
+interface IProps {
+  onSuccess?: () => void;
+}
+
+const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
   const formRef = useRef<FormHandles>(null);
 
   const [currencies, setCurrencies] = useState([] as ICurrency[]);
@@ -39,25 +43,32 @@ const CreateWalletForm: React.FC = () => {
     [currencies],
   );
 
-  const handleCreateWallet = useCallback(async (data: ICreateWalletDTO) => {
-    try {
-      setLoading(true);
-      formRef.current?.setErrors({});
+  const handleCreateWallet = useCallback(
+    async (data: ICreateWalletDTO) => {
+      try {
+        setLoading(true);
+        formRef.current?.setErrors({});
 
-      await createWallet.validate(data, {
-        abortEarly: false,
-      });
+        await createWallet.validate(data, {
+          abortEarly: false,
+        });
 
-      await api.post('/wallets', data);
+        await api.post('/wallets', data);
 
-      formRef.current?.setData({});
-      toast.success('Wallet successfully created');
-    } catch (err) {
-      handleErrors(err, formRef);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        formRef.current?.reset();
+        toast.success('Wallet successfully created');
+
+        if (onSuccess) {
+          onSuccess();
+        }
+      } catch (err) {
+        handleErrors(err, formRef);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [formRef, onSuccess],
+  );
 
   useEffect(() => {
     api

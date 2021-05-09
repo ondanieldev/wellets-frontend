@@ -46,6 +46,7 @@ const SignIn: React.FC = () => {
         {showSponsors && <Sponsors />}
         <Box
           w="100%"
+          h="100%"
           bg="gray.700"
           position="relative"
           borderEndRadius="5px"
