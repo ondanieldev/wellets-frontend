@@ -22,7 +22,7 @@ const Wallets: React.FC = () => {
   const [page, setPage] = useState(1);
   const [loadingDeleteWallet, setLoadingDeleteWallet] = useState(false);
 
-  const limit = useMemo(() => 25, []);
+  const limit = useMemo(() => 5, []);
 
   const fetchWallets = useCallback(async () => {
     try {

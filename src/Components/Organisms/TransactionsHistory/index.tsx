@@ -15,7 +15,7 @@ const TransactionHistory: React.FC<IProps> = ({
   walletId,
   updateTransactions,
 }) => {
-  const limit = useMemo(() => 25, []);
+  const limit = useMemo(() => 5, []);
 
   const [transactions, setTransactions] = useState([] as ITransaction[]);
   const [total, setTotal] = useState(0);

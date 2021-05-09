@@ -12,7 +12,7 @@ interface IProps {
 }
 
 const TransfersHistory: React.FC<IProps> = ({ walletId, updateTransfers }) => {
-  const limit = useMemo(() => 25, []);
+  const limit = useMemo(() => 5, []);
 
   const [transfers, setTransfers] = useState([] as ITransfer[]);
   const [total, setTotal] = useState(0);

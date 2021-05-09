@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Tabs,
@@ -7,6 +7,7 @@ import {
   TabPanels,
   TabPanel,
   Stack,
+  Heading,
 } from '@chakra-ui/react';
 
 import PageContainer from 'Components/Atoms/PageContainer';
@@ -18,6 +19,7 @@ import api from 'Services/api';
 import CreateTransferForm from 'Components/Organisms/CreateTransferForm';
 import TransactionsHistory from 'Components/Organisms/TransactionsHistory';
 import TransfersHistory from 'Components/Organisms/TransfersHistory';
+import IWallet from 'Entities/IWallet';
 
 interface IParams {
   id: string;
@@ -26,14 +28,36 @@ interface IParams {
 const Wallet: React.FC = () => {
   const params = useParams<IParams>();
 
+  const [wallet, setWallet] = useState({} as IWallet);
   const [updateTransactions, setUpdateTransactions] = useState(0);
   const [updateTransfers, setUpdateTransfers] = useState(0);
+
+  const title = useMemo(() => {
+    if (!wallet.alias || !wallet.currency) {
+      return '';
+    }
+    return `${wallet.alias} - ${wallet.currency.acronym}`;
+  }, [wallet]);
+
+  const fetchWallet = useCallback(async () => {
+    try {
+      const { id } = params;
+      const response = await api.get(`wallets/${id}`);
+      setWallet(response.data);
+    } catch {}
+  }, [params]);
+
+  useEffect(() => {
+    fetchWallet();
+  }, [fetchWallet]);
 
   return (
     <PageContainer>
       <Header />
 
-      <ContentContainer>
+      <ContentContainer flexDirection="column" justifyContent="start">
+        {title && <Heading>{title}</Heading>}
+
         <Tabs w="100%">
           <TabList>
             <Tab>Transactions</Tab>
