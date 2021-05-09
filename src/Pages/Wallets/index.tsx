@@ -110,7 +110,7 @@ const Wallets: React.FC = () => {
 
         {totalWallets > 0 && (
           <>
-            <Table variant="striped" colorScheme="teal" mt="25px">
+            <Table variant="striped" colorScheme="green" mt="25px">
               <Thead>
                 <Tr>
                   <Th>Alias</Th>

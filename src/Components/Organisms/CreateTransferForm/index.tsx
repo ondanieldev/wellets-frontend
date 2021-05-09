@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { FormHandles } from '@unform/core';
 import { toast } from 'react-toastify';
+import { Box } from '@chakra-ui/react';
 
 import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
@@ -98,23 +99,25 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
   }, [fetchWallets]);
 
   return (
-    <Form title="Create transfer" ref={formRef} onSubmit={handleCreateTransfer}>
-      <Select
-        label="Receiving wallet"
-        name="to_wallet_id"
-        options={walletsOptions}
-      />
-      <Input name="value" type="number" placeholder="Value" />
-      <Input name="static_rate" type="number" placeholder="Static rate" />
-      <Input
-        name="percentual_rate"
-        type="number"
-        placeholder="Percentual rate"
-      />
-      <Button isLoading={loading} type="submit" isPrimary>
-        Create
-      </Button>
-    </Form>
+    <Box w="100%">
+      <Form ref={formRef} onSubmit={handleCreateTransfer}>
+        <Select
+          label="Receiving wallet"
+          name="to_wallet_id"
+          options={walletsOptions}
+        />
+        <Input name="value" type="number" placeholder="Value" />
+        <Input name="static_rate" type="number" placeholder="Static rate" />
+        <Input
+          name="percentual_rate"
+          type="number"
+          placeholder="Percentual rate"
+        />
+        <Button isLoading={loading} type="submit" isPrimary>
+          Create
+        </Button>
+      </Form>
+    </Box>
   );
 };
 

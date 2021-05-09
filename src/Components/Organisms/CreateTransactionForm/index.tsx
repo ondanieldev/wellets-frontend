@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { FormHandles } from '@unform/core';
 import { toast } from 'react-toastify';
+import { Box } from '@chakra-ui/react';
 
 import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
@@ -36,6 +37,7 @@ const CreateTransactionForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
         await createTransaction.validate(data, {
           abortEarly: false,
         });
+        data.value = data.type === 'debit' ? data.value * -1 : data.value;
         delete data.type;
         data.wallet_id = walletId;
 
@@ -57,24 +59,22 @@ const CreateTransactionForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
   );
 
   return (
-    <Form
-      title="Create transaction"
-      ref={formRef}
-      onSubmit={handleCreateTransaction}
-    >
-      <Input name="value" type="number" placeholder="Value" />
-      <Input name="description" type="text" placeholder="Description" />
-      <Radio
-        name="type"
-        options={[
-          { id: 'credit', value: 'credit', label: 'Credit' },
-          { id: 'debit', value: 'debit', label: 'Debit' },
-        ]}
-      />
-      <Button isLoading={loading} type="submit" isPrimary>
-        Create
-      </Button>
-    </Form>
+    <Box w="100%">
+      <Form ref={formRef} onSubmit={handleCreateTransaction}>
+        <Input name="value" type="number" placeholder="Value" />
+        <Input name="description" type="text" placeholder="Description" />
+        <Radio
+          name="type"
+          options={[
+            { id: 'credit', value: 'credit', label: 'Credit' },
+            { id: 'debit', value: 'debit', label: 'Debit' },
+          ]}
+        />
+        <Button isLoading={loading} type="submit" isPrimary>
+          Create
+        </Button>
+      </Form>
+    </Box>
   );
 };
 
