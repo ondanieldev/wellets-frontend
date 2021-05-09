@@ -58,7 +58,7 @@ const CreateTransactionForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
 
   return (
     <Form
-      title="Create Transaction"
+      title="Create transaction"
       ref={formRef}
       onSubmit={handleCreateTransaction}
     >

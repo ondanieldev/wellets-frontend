@@ -8,6 +8,7 @@ import Header from 'Components/Organisms/Header';
 import CreateTransactionForm from 'Components/Organisms/CreateTransactionForm';
 
 import api from 'Services/api';
+import CreateTransferForm from 'Components/Organisms/CreateTransferForm';
 
 interface IParams {
   id: string;
@@ -43,7 +44,9 @@ const Wallet: React.FC = () => {
           <GridItem>
             <CreateTransactionForm walletId={params.id} />
           </GridItem>
-          <GridItem bg="papayawhip" />
+          <GridItem>
+            <CreateTransferForm walletId={params.id} />
+          </GridItem>
         </Grid>
       </ContentContainer>
     </PageContainer>

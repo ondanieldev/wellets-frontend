@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react';
 import { useField } from '@unform/core';
-import { FiAlertCircle } from 'react-icons/fi';
 import {
   Select as BaseSelect,
   SelectProps,
@@ -8,9 +7,10 @@ import {
   InputGroup,
   FormLabel,
   InputRightElement,
-  Tooltip,
   FormHelperText,
 } from '@chakra-ui/react';
+
+import InputError from '../InputError';
 
 export interface IOption {
   value: string | number;
@@ -45,8 +45,8 @@ const Select: React.FC<IProps> = ({
 
   return (
     <FormControl id={name}>
+      {label && <FormLabel>{label}</FormLabel>}
       <InputGroup>
-        {label && <FormLabel>{label}</FormLabel>}
         <BaseSelect ref={selectRef} defaultValue={defaultValue} {...rest}>
           {options.map(option => (
             <option key={option.value} value={option.value}>
@@ -56,11 +56,7 @@ const Select: React.FC<IProps> = ({
         </BaseSelect>
         {error && (
           <InputRightElement width="4.5rem">
-            <Tooltip label={error} bg="red.500" color="white" hasArrow>
-              <span>
-                <FiAlertCircle color="#E53E3E" size={20} />
-              </span>
-            </Tooltip>
+            <InputError error={error} />
           </InputRightElement>
         )}
       </InputGroup>
