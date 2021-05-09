@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { FormHandles } from '@unform/core';
 import { toast } from 'react-toastify';
+import { Box } from '@chakra-ui/react';
 
 import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
@@ -82,26 +83,28 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
   }, []);
 
   return (
-    <Form ref={formRef} onSubmit={handleCreateWallet}>
-      <Select
-        name="currency_id"
-        placeholder="Select a currency"
-        options={currenciesOptions}
-      />
-      <Input
-        name="alias"
-        type="text"
-        placeholder="Give a cool nickname to your wallet"
-      />
-      <Input
-        name="balance"
-        type="number"
-        placeholder="Type an optional initial balance"
-      />
-      <Button isLoading={loading} type="submit" isPrimary>
-        Create
-      </Button>
-    </Form>
+    <Box w="100%">
+      <Form ref={formRef} onSubmit={handleCreateWallet}>
+        <Select
+          name="currency_id"
+          placeholder="Select a currency"
+          options={currenciesOptions}
+        />
+        <Input
+          name="alias"
+          type="text"
+          placeholder="Give a cool nickname to your wallet"
+        />
+        <Input
+          name="balance"
+          type="number"
+          placeholder="Type an optional initial balance"
+        />
+        <Button isLoading={loading} type="submit" isPrimary>
+          Create
+        </Button>
+      </Form>
+    </Box>
   );
 };
 

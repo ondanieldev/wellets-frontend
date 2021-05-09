@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { useToast, LinkBox, LinkOverlay, Flex } from '@chakra-ui/react';
+import {
+  useToast,
+  LinkBox,
+  LinkOverlay,
+  Flex,
+  Stack,
+  Heading,
+} from '@chakra-ui/react';
 
 import Button from 'Components/Atoms/Button';
 import PageContainer from 'Components/Atoms/PageContainer';
@@ -88,65 +95,65 @@ const Wallets: React.FC = () => {
     <PageContainer>
       <Header />
 
-      <ContentContainer
-        bg="gray.700"
-        flexDirection="column"
-        justifyContent="start"
-      >
-        <CreateWalletForm onSuccess={fetchWallets} />
+      <ContentContainer flexDirection="column" justifyContent="start">
+        <Heading>Wallets</Heading>
 
-        <Table
-          rows={wallets}
-          columns={[
-            {
-              title: 'Alias',
-              key: 'alias',
-              dataIndex: 'alias',
-            },
-            {
-              title: 'Currency',
-              key: 'currency',
-              render(wallet: IWallet) {
-                return getCurrency(wallet.currency_id);
+        <Stack mt="50px" w="100%" direction="row" spacing="25px">
+          <Table
+            rows={wallets}
+            columns={[
+              {
+                title: 'Alias',
+                key: 'alias',
+                dataIndex: 'alias',
               },
-            },
-            {
-              title: 'Balance',
-              key: 'balance',
-              dataIndex: 'balance',
-            },
-            {
-              title: 'Actions',
-              key: 'actions',
-              render(wallet: IWallet) {
-                return (
-                  <Flex>
-                    <LinkBox>
-                      <Button mr="10px">
-                        <LinkOverlay href={`/wallets/${wallet.id}`}>
-                          View
-                        </LinkOverlay>
+              {
+                title: 'Currency',
+                key: 'currency',
+                render(wallet: IWallet) {
+                  return getCurrency(wallet.currency_id);
+                },
+              },
+              {
+                title: 'Balance',
+                key: 'balance',
+                dataIndex: 'balance',
+              },
+              {
+                title: 'Actions',
+                key: 'actions',
+                render(wallet: IWallet) {
+                  return (
+                    <Flex>
+                      <LinkBox>
+                        <Button mr="10px">
+                          <LinkOverlay href={`/wallets/${wallet.id}`}>
+                            View
+                          </LinkOverlay>
+                        </Button>
+                      </LinkBox>
+                      <Button
+                        type="button"
+                        isLoading={loadingDeleteWallet}
+                        onClick={() => handleDeleteWallet(wallet.id)}
+                      >
+                        Delete
                       </Button>
-                    </LinkBox>
-                    <Button
-                      type="button"
-                      isLoading={loadingDeleteWallet}
-                      onClick={() => handleDeleteWallet(wallet.id)}
-                    >
-                      Delete
-                    </Button>
-                  </Flex>
-                );
+                    </Flex>
+                  );
+                },
               },
-            },
-          ]}
-          pagination={{
-            limit,
-            currentPage: page,
-            total: totalWallets,
-            setPage,
-          }}
-        />
+            ]}
+            pagination={{
+              limit,
+              currentPage: page,
+              total: totalWallets,
+              setPage,
+            }}
+          />
+
+          <CreateWalletForm onSuccess={fetchWallets} />
+        </Stack>
       </ContentContainer>
     </PageContainer>
   );
