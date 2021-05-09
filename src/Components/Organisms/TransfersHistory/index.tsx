@@ -8,9 +8,10 @@ import api from 'Services/api';
 
 interface IProps {
   walletId: string;
+  updateTransfers: number;
 }
 
-const TransfersHistory: React.FC<IProps> = ({ walletId }) => {
+const TransfersHistory: React.FC<IProps> = ({ walletId, updateTransfers }) => {
   const limit = useMemo(() => 25, []);
 
   const [transfers, setTransfers] = useState([] as ITransfer[]);
@@ -29,7 +30,7 @@ const TransfersHistory: React.FC<IProps> = ({ walletId }) => {
       setTransfers(response.data.transfers);
       setTotal(response.data.total);
     } catch {}
-  }, [limit, page, walletId]);
+  }, [limit, page, walletId, updateTransfers]);
 
   useEffect(() => {
     fetchTransactions();
@@ -60,10 +61,9 @@ const TransfersHistory: React.FC<IProps> = ({ walletId }) => {
           key: 'fee',
           render(transfer: ITransfer) {
             const currency = transfer.from_wallet.currency.acronym;
-            console.log(transfer);
             const fee =
               Number(transfer.static_rate) +
-              Number(transfer.percentual_rate) * Number(transfer.value);
+              (Number(transfer.percentual_rate) / 100) * Number(transfer.value);
             return `${Number(fee).toFixed(2)} ${currency}`;
           },
         },

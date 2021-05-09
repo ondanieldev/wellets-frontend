@@ -8,9 +8,13 @@ import api from 'Services/api';
 
 interface IProps {
   walletId: string;
+  updateTransactions: number;
 }
 
-const TransactionHistory: React.FC<IProps> = ({ walletId }) => {
+const TransactionHistory: React.FC<IProps> = ({
+  walletId,
+  updateTransactions,
+}) => {
   const limit = useMemo(() => 25, []);
 
   const [transactions, setTransactions] = useState([] as ITransaction[]);
@@ -29,7 +33,7 @@ const TransactionHistory: React.FC<IProps> = ({ walletId }) => {
       setTransactions(response.data.transactions);
       setTotal(response.data.total);
     } catch {}
-  }, [limit, page, walletId]);
+  }, [limit, page, walletId, updateTransactions]);
 
   useEffect(() => {
     fetchTransactions();

@@ -34,7 +34,7 @@ const Table: React.FC<IProps> = ({ columns, rows, pagination }) => {
     <>
       {(!pagination || (pagination && pagination.total > 0)) && (
         <Box w="100%">
-          <BaseTable variant="striped" colorScheme="green">
+          <BaseTable>
             <Thead>
               <Tr>
                 {columns.map(column => (

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Tabs,
@@ -26,6 +26,9 @@ interface IParams {
 const Wallet: React.FC = () => {
   const params = useParams<IParams>();
 
+  const [updateTransactions, setUpdateTransactions] = useState(0);
+  const [updateTransfers, setUpdateTransfers] = useState(0);
+
   return (
     <PageContainer>
       <Header />
@@ -40,14 +43,28 @@ const Wallet: React.FC = () => {
           <TabPanels>
             <TabPanel>
               <Stack direction="row" spacing="25px">
-                <TransactionsHistory walletId={params.id} />
-                <CreateTransactionForm walletId={params.id} />
+                <TransactionsHistory
+                  walletId={params.id}
+                  updateTransactions={updateTransactions}
+                />
+                <CreateTransactionForm
+                  walletId={params.id}
+                  onSuccess={() =>
+                    setUpdateTransactions(updateTransactions + 1)
+                  }
+                />
               </Stack>
             </TabPanel>
             <TabPanel>
               <Stack direction="row" spacing="25px">
-                <TransfersHistory walletId={params.id} />
-                <CreateTransferForm walletId={params.id} />
+                <TransfersHistory
+                  walletId={params.id}
+                  updateTransfers={updateTransfers}
+                />
+                <CreateTransferForm
+                  walletId={params.id}
+                  onSuccess={() => setUpdateTransfers(updateTransfers + 1)}
+                />
               </Stack>
             </TabPanel>
           </TabPanels>
