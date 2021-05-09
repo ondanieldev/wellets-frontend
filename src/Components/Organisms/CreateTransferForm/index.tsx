@@ -6,19 +6,19 @@ import React, {
   useMemo,
 } from 'react';
 import { FormHandles } from '@unform/core';
-import { toast } from 'react-toastify';
-import { Box } from '@chakra-ui/react';
+import { Box, useToast } from '@chakra-ui/react';
 
 import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
 import Select, { IOption } from 'Components/Atoms/Select';
 import Button from 'Components/Atoms/Button';
 
+import { useErrors } from 'Hooks/errors';
+
 import ICreateTransferDTO from 'DTOs/ICreateTransferDTO';
 
 import api from 'Services/api';
 import createTransfer from 'Schemas/createTransfer';
-import handleErrors from 'Helpers/handleErrors';
 import IWallet from 'Entities/IWallet';
 
 interface IProps {
@@ -27,6 +27,9 @@ interface IProps {
 }
 
 const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
+  const toast = useToast();
+  const { handleErrors } = useErrors();
+
   const formRef = useRef<FormHandles>(null);
 
   const [loading, setLoading] = useState(false);
@@ -80,7 +83,13 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
         await api.post('/transfers', data);
 
         formRef.current?.reset();
-        toast.success('Transfer successfully created');
+        toast({
+          title: 'A new transfer has been successfully created!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
 
         if (onSuccess) {
           onSuccess();
@@ -91,7 +100,7 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
         setLoading(false);
       }
     },
-    [formRef, onSuccess, walletId],
+    [formRef, onSuccess, walletId, handleErrors, toast],
   );
 
   useEffect(() => {

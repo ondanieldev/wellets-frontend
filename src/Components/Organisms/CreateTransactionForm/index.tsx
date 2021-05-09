@@ -1,18 +1,18 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { FormHandles } from '@unform/core';
-import { toast } from 'react-toastify';
-import { Box } from '@chakra-ui/react';
+import { Box, useToast } from '@chakra-ui/react';
 
 import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
 import Radio from 'Components/Atoms/Radio';
 import Button from 'Components/Atoms/Button';
 
+import { useErrors } from 'Hooks/errors';
+
 import ICreateTransactionDTO from 'DTOs/ICreateTransactionDTO';
 
 import api from 'Services/api';
 import createTransaction from 'Schemas/createTransaction';
-import handleErrors from 'Helpers/handleErrors';
 
 interface ICreateTransaction extends ICreateTransactionDTO {
   type?: 'credit' | 'debit';
@@ -24,6 +24,9 @@ interface IProps {
 }
 
 const CreateTransactionForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
+  const toast = useToast();
+  const { handleErrors } = useErrors();
+
   const formRef = useRef<FormHandles>(null);
 
   const [loading, setLoading] = useState(false);
@@ -44,7 +47,13 @@ const CreateTransactionForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
         await api.post('/transactions', data);
 
         formRef.current?.reset();
-        toast.success('Transaction successfully created');
+        toast({
+          title: 'A new transaction has been successfully created!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
 
         if (onSuccess) {
           onSuccess();
@@ -55,7 +64,7 @@ const CreateTransactionForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
         setLoading(false);
       }
     },
-    [formRef, onSuccess, walletId],
+    [formRef, onSuccess, walletId, toast, handleErrors],
   );
 
   return (

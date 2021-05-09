@@ -15,13 +15,15 @@ import Table from 'Components/Molecules/Table';
 import CreateWalletForm from 'Components/Organisms/CreateWalletForm';
 import Header from 'Components/Organisms/Header';
 
+import { useErrors } from 'Hooks/errors';
+
 import ICurrency from 'Entities/ICurrency';
 import IWallet from 'Entities/IWallet';
 import api from 'Services/api';
-import handleErrors from 'Helpers/handleErrors';
 
 const Wallets: React.FC = () => {
   const toast = useToast();
+  const { handleErrors } = useErrors();
 
   const [currencies, setCurrencies] = useState([] as ICurrency[]);
   const [wallets, setWallets] = useState([] as IWallet[]);
@@ -44,7 +46,7 @@ const Wallets: React.FC = () => {
     } catch (err) {
       handleErrors(err);
     }
-  }, [page, limit]);
+  }, [page, limit, handleErrors]);
 
   const fetchCurrencies = useCallback(async () => {
     try {
@@ -83,7 +85,7 @@ const Wallets: React.FC = () => {
         setLoadingDeleteWallet(false);
       }
     },
-    [toast, fetchWallets],
+    [toast, fetchWallets, handleErrors],
   );
 
   useEffect(() => {

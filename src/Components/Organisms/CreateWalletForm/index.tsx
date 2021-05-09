@@ -6,26 +6,29 @@ import React, {
   useRef,
 } from 'react';
 import { FormHandles } from '@unform/core';
-import { toast } from 'react-toastify';
-import { Box } from '@chakra-ui/react';
+import { Box, useToast } from '@chakra-ui/react';
 
 import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
 import Select, { IOption } from 'Components/Atoms/Select';
 import Button from 'Components/Atoms/Button';
 
+import { useErrors } from 'Hooks/errors';
+
 import ICurrency from 'Entities/ICurrency';
 import ICreateWalletDTO from 'DTOs/ICreateWalletDTO';
 
 import api from 'Services/api';
 import createWallet from 'Schemas/createWallet';
-import handleErrors from 'Helpers/handleErrors';
 
 interface IProps {
   onSuccess?: () => void;
 }
 
 const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
+  const toast = useToast();
+  const { handleErrors } = useErrors();
+
   const formRef = useRef<FormHandles>(null);
 
   const [currencies, setCurrencies] = useState([] as ICurrency[]);
@@ -57,7 +60,13 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
         await api.post('/wallets', data);
 
         formRef.current?.reset();
-        toast.success('Wallet successfully created');
+        toast({
+          title: 'A new wallet has been successfully created!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
 
         if (onSuccess) {
           onSuccess();
@@ -68,7 +77,7 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
         setLoading(false);
       }
     },
-    [formRef, onSuccess],
+    [formRef, onSuccess, handleErrors, toast],
   );
 
   useEffect(() => {
@@ -80,7 +89,7 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
       .catch(err => {
         handleErrors(err);
       });
-  }, []);
+  }, [handleErrors]);
 
   return (
     <Box w="100%">
