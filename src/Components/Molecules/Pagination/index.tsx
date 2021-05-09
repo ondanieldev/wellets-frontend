@@ -3,14 +3,14 @@ import { Container, Flex } from '@chakra-ui/react';
 
 import Button from 'Components/Atoms/Button';
 
-interface IProps {
+export interface IPaginationProps {
   currentPage: number;
   limit: number;
   total: number;
   setPage: (newPage: number) => void;
 }
 
-const Pagination: React.FC<IProps> = ({
+const Pagination: React.FC<IPaginationProps> = ({
   currentPage,
   limit,
   total,
@@ -31,6 +31,7 @@ const Pagination: React.FC<IProps> = ({
         )}
         {pages.map(page => (
           <Button
+            key={page}
             borderRadius="0"
             isPrimary={page === currentPage}
             onClick={() => setPage(page)}

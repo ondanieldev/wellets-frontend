@@ -1,27 +1,17 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import {
-  Table,
-  Tbody,
-  Td,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
-  useToast,
-} from '@chakra-ui/react';
+import { useToast, LinkBox, LinkOverlay, Flex } from '@chakra-ui/react';
 
+import Button from 'Components/Atoms/Button';
 import PageContainer from 'Components/Atoms/PageContainer';
 import ContentContainer from 'Components/Atoms/ContentContainer';
+import Table from 'Components/Molecules/Table';
 import CreateWalletForm from 'Components/Organisms/CreateWalletForm';
 import Header from 'Components/Organisms/Header';
 
 import ICurrency from 'Entities/ICurrency';
 import IWallet from 'Entities/IWallet';
-
 import api from 'Services/api';
 import handleErrors from 'Helpers/handleErrors';
-import Button from 'Components/Atoms/Button';
-import Pagination from 'Components/Molecules/Pagination';
 
 const Wallets: React.FC = () => {
   const toast = useToast();
@@ -32,7 +22,7 @@ const Wallets: React.FC = () => {
   const [page, setPage] = useState(1);
   const [loadingDeleteWallet, setLoadingDeleteWallet] = useState(false);
 
-  const limit = useMemo(() => 25, []);
+  const limit = useMemo(() => 5, []);
 
   const fetchWallets = useCallback(async () => {
     try {
@@ -105,53 +95,58 @@ const Wallets: React.FC = () => {
       >
         <CreateWalletForm onSuccess={fetchWallets} />
 
-        {totalWallets > 0 && (
-          <>
-            <Table variant="striped" colorScheme="teal" mt="25px">
-              <Thead>
-                <Tr>
-                  <Th>Alias</Th>
-                  <Th>Currency</Th>
-                  <Th>Balance</Th>
-                  <Th>Actions</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {wallets.map(wallet => (
-                  <Tr key={wallet.id}>
-                    <Td>{wallet.alias}</Td>
-                    <Td>{getCurrency(wallet.currency_id)}</Td>
-                    <Td>{wallet.balance}</Td>
-                    <Td>
-                      <Button mr="10px">View</Button>
-                      <Button
-                        type="button"
-                        isLoading={loadingDeleteWallet}
-                        onClick={() => handleDeleteWallet(wallet.id)}
-                      >
-                        Delete
+        <Table
+          rows={wallets}
+          columns={[
+            {
+              title: 'Alias',
+              key: 'alias',
+              dataIndex: 'alias',
+            },
+            {
+              title: 'Currency',
+              key: 'currency',
+              render(wallet: IWallet) {
+                return getCurrency(wallet.currency_id);
+              },
+            },
+            {
+              title: 'Balance',
+              key: 'balance',
+              dataIndex: 'balance',
+            },
+            {
+              title: 'Actions',
+              key: 'actions',
+              render(wallet: IWallet) {
+                return (
+                  <Flex>
+                    <LinkBox>
+                      <Button mr="10px">
+                        <LinkOverlay href={`/wallets/${wallet.id}`}>
+                          View
+                        </LinkOverlay>
                       </Button>
-                    </Td>
-                  </Tr>
-                ))}
-              </Tbody>
-              <Tfoot>
-                <Tr>
-                  <Th>Alias</Th>
-                  <Th>Currency</Th>
-                  <Th>Balance</Th>
-                  <Th>Actions</Th>
-                </Tr>
-              </Tfoot>
-            </Table>
-            <Pagination
-              limit={limit}
-              currentPage={page}
-              total={totalWallets}
-              setPage={setPage}
-            />
-          </>
-        )}
+                    </LinkBox>
+                    <Button
+                      type="button"
+                      isLoading={loadingDeleteWallet}
+                      onClick={() => handleDeleteWallet(wallet.id)}
+                    >
+                      Delete
+                    </Button>
+                  </Flex>
+                );
+              },
+            },
+          ]}
+          pagination={{
+            limit,
+            currentPage: page,
+            total: totalWallets,
+            setPage,
+          }}
+        />
       </ContentContainer>
     </PageContainer>
   );
