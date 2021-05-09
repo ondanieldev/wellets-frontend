@@ -31,6 +31,7 @@ const Pagination: React.FC<IProps> = ({
         )}
         {pages.map(page => (
           <Button
+            key={page}
             borderRadius="0"
             isPrimary={page === currentPage}
             onClick={() => setPage(page)}

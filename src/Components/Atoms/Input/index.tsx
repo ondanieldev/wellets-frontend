@@ -1,6 +1,5 @@
 import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { useField } from '@unform/core';
-import { FiAlertCircle } from 'react-icons/fi';
 import {
   Input as BaseInput,
   FormControl,
@@ -10,8 +9,9 @@ import {
   InputGroup,
   InputRightElement,
   Button,
-  Tooltip,
 } from '@chakra-ui/react';
+
+import InputError from '../InputError';
 
 interface IProps extends InputProps {
   name: string;
@@ -67,11 +67,7 @@ const Input: React.FC<IProps> = ({ name, label, helper, type, ...rest }) => {
             >
               {showPassword ? 'Hide' : 'Show'}
             </Button>
-            <Tooltip label={error} bg="red.500" color="white" hasArrow>
-              <span>
-                <FiAlertCircle color="#E53E3E" size={20} />
-              </span>
-            </Tooltip>
+            <InputError error={error} />
           </InputRightElement>
         )}
         {type === 'password' && !error && (
@@ -87,11 +83,7 @@ const Input: React.FC<IProps> = ({ name, label, helper, type, ...rest }) => {
         )}
         {type !== 'password' && error && (
           <InputRightElement width="4.5rem">
-            <Tooltip label={error} bg="red.500" color="white" hasArrow>
-              <span>
-                <FiAlertCircle color="#E53E3E" size={20} />
-              </span>
-            </Tooltip>
+            <InputError error={error} />
           </InputRightElement>
         )}
       </InputGroup>

@@ -8,6 +8,9 @@ import {
   Thead,
   Tr,
   useToast,
+  LinkBox,
+  LinkOverlay,
+  Flex,
 } from '@chakra-ui/react';
 
 import PageContainer from 'Components/Atoms/PageContainer';
@@ -123,14 +126,22 @@ const Wallets: React.FC = () => {
                     <Td>{getCurrency(wallet.currency_id)}</Td>
                     <Td>{wallet.balance}</Td>
                     <Td>
-                      <Button mr="10px">View</Button>
-                      <Button
-                        type="button"
-                        isLoading={loadingDeleteWallet}
-                        onClick={() => handleDeleteWallet(wallet.id)}
-                      >
-                        Delete
-                      </Button>
+                      <Flex>
+                        <LinkBox>
+                          <Button mr="10px">
+                            <LinkOverlay href={`/wallets/${wallet.id}`}>
+                              View
+                            </LinkOverlay>
+                          </Button>
+                        </LinkBox>
+                        <Button
+                          type="button"
+                          isLoading={loadingDeleteWallet}
+                          onClick={() => handleDeleteWallet(wallet.id)}
+                        >
+                          Delete
+                        </Button>
+                      </Flex>
                     </Td>
                   </Tr>
                 ))}
