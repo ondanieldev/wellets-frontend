@@ -16,7 +16,8 @@ import CreateTransactionForm from 'Components/Organisms/CreateTransactionForm';
 
 import api from 'Services/api';
 import CreateTransferForm from 'Components/Organisms/CreateTransferForm';
-import TransactionHistory from 'Components/Organisms/TransactionHistory';
+import TransactionsHistory from 'Components/Organisms/TransactionsHistory';
+import TransfersHistory from 'Components/Organisms/TransfersHistory';
 
 interface IParams {
   id: string;
@@ -39,13 +40,13 @@ const Wallet: React.FC = () => {
           <TabPanels>
             <TabPanel>
               <Stack direction="row" spacing="25px">
-                <TransactionHistory walletId={params.id} />
+                <TransactionsHistory walletId={params.id} />
                 <CreateTransactionForm walletId={params.id} />
               </Stack>
             </TabPanel>
             <TabPanel>
               <Stack direction="row" spacing="25px">
-                <TransactionHistory walletId={params.id} />
+                <TransfersHistory walletId={params.id} />
                 <CreateTransferForm walletId={params.id} />
               </Stack>
             </TabPanel>

@@ -7,6 +7,7 @@ interface ITransfer {
   value: number;
   static_rate: number;
   percentual_rate: number;
+  filled: number;
   created_at: Date;
   updated_at: Date;
   from_wallet: IWallet;

@@ -29,6 +29,7 @@
         "prettier"
     ],
     "rules": {
+      "no-nested-ternary": "off",
       "no-plusplus": "off",
       "no-await-in-loop": "off",
       "react/no-array-index-key": "off",

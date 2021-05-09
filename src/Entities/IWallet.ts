@@ -1,4 +1,6 @@
 import ICurrency from './ICurrency';
+import ITransaction from './ITransaction';
+import ITransfer from './ITransfer';
 import IUser from './IUser';
 
 interface IWallet {
@@ -11,9 +13,9 @@ interface IWallet {
   updated_at: Date;
   user: IUser;
   currency: ICurrency;
-  // transactions: Transaction[];
-  // from_transfers: Transfer[];
-  // to_transfers: Transfer[];
+  transactions: ITransaction[];
+  from_transfers: ITransfer[];
+  to_transfers: ITransfer[];
 }
 
 export default IWallet;
