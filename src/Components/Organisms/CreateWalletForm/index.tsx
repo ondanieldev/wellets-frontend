@@ -47,6 +47,15 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
     [currencies],
   );
 
+  const fetchCurrencies = useCallback(async () => {
+    try {
+      const response = await api.get('/currencies');
+      setCurrencies(response.data);
+    } catch (err) {
+      handleErrors(err);
+    }
+  }, [handleErrors]);
+
   const handleCreateWallet = useCallback(
     async (data: ICreateWalletDTO) => {
       try {
@@ -81,15 +90,8 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
   );
 
   useEffect(() => {
-    api
-      .get('/currencies')
-      .then(response => {
-        setCurrencies(response.data);
-      })
-      .catch(err => {
-        handleErrors(err);
-      });
-  }, [handleErrors]);
+    fetchCurrencies();
+  }, [fetchCurrencies]);
 
   return (
     <Box w="100%">
