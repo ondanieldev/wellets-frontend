@@ -60,7 +60,7 @@ const Table: React.FC<IProps> = ({ columns, rows, pagination }) => {
               {rows.map((row, index) => (
                 <Tr key={index}>
                   {columns.map(column => (
-                    <Td>
+                    <Td key={column.key}>
                       {column.render
                         ? column.render(row)
                         : column.dataIndex
