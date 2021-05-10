@@ -29,32 +29,32 @@ const Menu: React.FC = () => {
           h="100%"
         >
           <MenuItem
-            icon="transaction"
-            items={[
-              'Add money to your wallets',
-              'Remove money from your wallets',
-              'View your transaction history',
-            ]}
+            icon="unknown"
+            items={['Check our roadmap and help us to unlock this character']}
             palette={['#4299E1', '#63B3ED', '#3182CE', '#4299E1']}
-            title="Transactions"
-            link="/transactions"
+            title="Coming soon"
+            link="/"
           />
           <MenuItem
             icon="wallet"
-            items={['Create a new wallet', 'Manage your wallets']}
+            items={[
+              'Create a new wallet',
+              'View your wallets',
+              'Create transactions',
+              'View your transaction history',
+              'Create transafers',
+              'View your transfer history',
+            ]}
             palette={['#48BB78', '#68D391', '#38A169', '#48BB78']}
             title="Wallets"
             link="/wallets"
           />
           <MenuItem
-            icon="transfer"
-            items={[
-              'Transfer money between two wallets',
-              'View your transfer history',
-            ]}
+            icon="unknow"
+            items={['Check our roadmap and help us to unlock this character']}
             palette={['#9F7AEA', '#B794F4', '#805AD5', '#9F7AEA']}
-            title="Transfers"
-            link="/transfers"
+            title="Coming soon"
+            link="/"
           />
         </Grid>
       </ContentContainer>

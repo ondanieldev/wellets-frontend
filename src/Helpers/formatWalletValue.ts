@@ -6,7 +6,6 @@ export default function formatWalletValue(
   currency?: string,
 ): string {
   const parsedValue = parseInt(value.toString(), 10).toFixed(2);
-  console.log(value, wallet);
   if (currency) {
     return `${parsedValue} ${currency}`;
   }
