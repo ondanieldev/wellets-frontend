@@ -8,6 +8,8 @@ import {
   TabPanel,
   Stack,
   Heading,
+  useBreakpointValue,
+  StackDirection,
 } from '@chakra-ui/react';
 
 import PageContainer from 'Components/Atoms/PageContainer';
@@ -27,6 +29,14 @@ interface IParams {
 
 const Wallet: React.FC = () => {
   const params = useParams<IParams>();
+  const stack = useBreakpointValue({
+    base: {
+      direction: 'column' as StackDirection,
+    },
+    lg: {
+      direction: 'row' as StackDirection,
+    },
+  });
 
   const [wallet, setWallet] = useState({} as IWallet);
   const [updateTransactions, setUpdateTransactions] = useState(0);
@@ -66,7 +76,7 @@ const Wallet: React.FC = () => {
 
           <TabPanels>
             <TabPanel>
-              <Stack direction="row" spacing="25px">
+              <Stack direction={stack?.direction} spacing="25px">
                 <TransactionsHistory
                   walletId={params.id}
                   updateTransactions={updateTransactions}
@@ -80,7 +90,7 @@ const Wallet: React.FC = () => {
               </Stack>
             </TabPanel>
             <TabPanel>
-              <Stack direction="row" spacing="25px">
+              <Stack direction={stack?.direction} spacing="25px">
                 <TransfersHistory
                   walletId={params.id}
                   updateTransfers={updateTransfers}

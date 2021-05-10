@@ -6,6 +6,8 @@ import {
   Flex,
   Stack,
   Heading,
+  useBreakpointValue,
+  StackDirection,
 } from '@chakra-ui/react';
 
 import Button from 'Components/Atoms/Button';
@@ -23,8 +25,16 @@ import api from 'Services/api';
 import formatWalletValue from 'Helpers/formatWalletValue';
 
 const Wallets: React.FC = () => {
-  const toast = useToast();
   const { handleErrors } = useErrors();
+  const toast = useToast();
+  const stack = useBreakpointValue({
+    base: {
+      direction: 'column' as StackDirection,
+    },
+    lg: {
+      direction: 'row' as StackDirection,
+    },
+  });
 
   const [currencies, setCurrencies] = useState([] as ICurrency[]);
   const [wallets, setWallets] = useState([] as IWallet[]);
@@ -101,7 +111,7 @@ const Wallets: React.FC = () => {
       <ContentContainer flexDirection="column" justifyContent="start">
         <Heading>Wallets</Heading>
 
-        <Stack mt="50px" w="100%" direction="row" spacing="25px">
+        <Stack mt="50px" w="100%" direction={stack?.direction} spacing="25px">
           <Table
             rows={wallets}
             columns={[

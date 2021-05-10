@@ -1,4 +1,5 @@
 import React from 'react';
+import CSS from 'csstype';
 import {
   Box,
   Table as BaseTable,
@@ -8,6 +9,8 @@ import {
   Th,
   Thead,
   Tr,
+  useBreakpointValue,
+  ResponsiveValue,
 } from '@chakra-ui/react';
 
 import Pagination, { IPaginationProps } from '../Pagination';
@@ -29,12 +32,23 @@ interface IProps {
   pagination?: IPaginationProps;
 }
 
+type OverflowX = ResponsiveValue<CSS.Property.OverflowX>;
+
 const Table: React.FC<IProps> = ({ columns, rows, pagination }) => {
+  const box = useBreakpointValue({
+    base: {
+      overflowX: 'scroll' as OverflowX,
+    },
+    lg: {
+      overflowX: 'auto' as OverflowX,
+    },
+  });
+
   return (
     <>
       {(!pagination || (pagination && pagination.total > 0)) && (
-        <Box w="100%">
-          <BaseTable>
+        <Box w="100%" maxW="100vw" overflowX={box?.overflowX}>
+          <BaseTable w="100%" maxW="100vw">
             <Thead>
               <Tr>
                 {columns.map(column => (
