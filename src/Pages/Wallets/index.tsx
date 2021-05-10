@@ -20,6 +20,7 @@ import { useErrors } from 'Hooks/errors';
 import ICurrency from 'Entities/ICurrency';
 import IWallet from 'Entities/IWallet';
 import api from 'Services/api';
+import formatWalletValue from 'Helpers/formatWalletValue';
 
 const Wallets: React.FC = () => {
   const toast = useToast();
@@ -61,7 +62,7 @@ const Wallets: React.FC = () => {
       if (!currency) {
         return id;
       }
-      return currency.alias;
+      return currency.acronym;
     },
     [currencies],
   );
@@ -119,7 +120,11 @@ const Wallets: React.FC = () => {
               {
                 title: 'Balance',
                 key: 'balance',
-                dataIndex: 'balance',
+                render(wallet: IWallet) {
+                  const { balance, currency_id } = wallet;
+                  const currency = getCurrency(currency_id);
+                  return formatWalletValue(balance, wallet, currency);
+                },
               },
               {
                 title: 'Actions',
@@ -138,6 +143,12 @@ const Wallets: React.FC = () => {
                         type="button"
                         isLoading={loadingDeleteWallet}
                         onClick={() => handleDeleteWallet(wallet.id)}
+                        confirmation={{
+                          body:
+                            'Are you sure you want to delete this wallet? All data attached to it will be lost.',
+                          buttonText: 'I am sure',
+                          colorSchema: 'red',
+                        }}
                       >
                         Delete
                       </Button>

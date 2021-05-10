@@ -29,6 +29,7 @@
         "prettier"
     ],
     "rules": {
+      "@typescript-eslint/no-empty-function": "off",
       "no-nested-ternary": "off",
       "no-plusplus": "off",
       "no-await-in-loop": "off",

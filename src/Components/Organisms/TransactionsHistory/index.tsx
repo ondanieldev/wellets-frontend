@@ -4,6 +4,7 @@ import Table from 'Components/Molecules/Table';
 
 import ITransaction from 'Entities/ITransaction';
 import formatDate from 'Helpers/formatDate';
+import formatWalletValue from 'Helpers/formatWalletValue';
 import api from 'Services/api';
 
 interface IProps {
@@ -57,8 +58,11 @@ const TransactionHistory: React.FC<IProps> = ({
         },
         {
           title: 'Value',
-          dataIndex: 'value',
           key: 'value',
+          render(transaction: ITransaction) {
+            const { value, wallet } = transaction;
+            return formatWalletValue(value, wallet);
+          },
         },
       ]}
       pagination={{
