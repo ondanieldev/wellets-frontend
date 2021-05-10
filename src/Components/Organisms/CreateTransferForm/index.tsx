@@ -64,8 +64,10 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
       }
 
       setWallets(newWallets.filter(wallet => wallet.id !== walletId));
-    } catch {}
-  }, [walletId]);
+    } catch (err) {
+      handleErrors('Error when fetching wallets', err);
+    }
+  }, [walletId, handleErrors]);
 
   const handleCreateTransfer = useCallback(
     async (data: ICreateTransferDTO) => {
@@ -95,7 +97,7 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
           onSuccess();
         }
       } catch (err) {
-        handleErrors(err, formRef);
+        handleErrors('Error when creating a new transfer', err, formRef);
       } finally {
         setLoading(false);
       }

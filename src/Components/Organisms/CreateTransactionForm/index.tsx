@@ -59,7 +59,7 @@ const CreateTransactionForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
           onSuccess();
         }
       } catch (err) {
-        handleErrors(err, formRef);
+        handleErrors('Error when creating a new transaction', err, formRef);
       } finally {
         setLoading(false);
       }

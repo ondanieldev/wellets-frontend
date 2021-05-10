@@ -52,7 +52,7 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
       const response = await api.get('/currencies');
       setCurrencies(response.data);
     } catch (err) {
-      handleErrors(err);
+      handleErrors('Error when fetching currencies', err);
     }
   }, [handleErrors]);
 
@@ -81,7 +81,7 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
           onSuccess();
         }
       } catch (err) {
-        handleErrors(err, formRef);
+        handleErrors('Error when creating a new wallet', err, formRef);
       } finally {
         setLoading(false);
       }

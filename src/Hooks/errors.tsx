@@ -11,7 +11,11 @@ import { useToast } from '@chakra-ui/react';
 
 interface IErrorsContext {
   getValidationErrors(err: YupValidationError): Errors;
-  handleErrors(err: any, formRef?: MutableRefObject<FormHandles | null>): void;
+  handleErrors(
+    title: string,
+    err: any,
+    formRef?: MutableRefObject<FormHandles | null>,
+  ): void;
 }
 
 interface Errors {
@@ -35,7 +39,11 @@ export const ErrorsProvider: React.FC = ({ children }) => {
   }, []);
 
   const handleErrors = useCallback(
-    (err: any, formRef?: MutableRefObject<FormHandles | null>): void => {
+    (
+      title: string,
+      err: any,
+      formRef?: MutableRefObject<FormHandles | null>,
+    ): void => {
       if (err instanceof YupValidationError && formRef) {
         const errors = getValidationErrors(err);
         formRef.current?.setErrors(errors);
@@ -51,7 +59,8 @@ export const ErrorsProvider: React.FC = ({ children }) => {
           else if (celebrate.params) message = celebrate.params.message;
         }
         toast({
-          title: message || e.message || e,
+          title,
+          description: message || e.message || e,
           status: 'error',
           duration: 5000,
           isClosable: true,

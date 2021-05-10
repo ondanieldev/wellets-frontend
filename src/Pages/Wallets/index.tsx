@@ -55,7 +55,7 @@ const Wallets: React.FC = () => {
       setWallets(response.data.wallets);
       setTotalWallets(response.data.total);
     } catch (err) {
-      handleErrors(err);
+      handleErrors('Error when fetching wallets', err);
     }
   }, [page, limit, handleErrors]);
 
@@ -91,7 +91,7 @@ const Wallets: React.FC = () => {
         });
         fetchWallets();
       } catch (err) {
-        handleErrors(err);
+        handleErrors('Error when deleting wallet', err);
       } finally {
         setLoadingDeleteWallet(false);
       }

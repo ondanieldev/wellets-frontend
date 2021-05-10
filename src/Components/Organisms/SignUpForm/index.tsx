@@ -44,7 +44,7 @@ const SignUpForm: React.FC<IProps> = ({ onSuccess }) => {
         });
         onSuccess();
       } catch (err) {
-        handleErrors(err, signUpFormRef);
+        handleErrors('Error when signing up', err, signUpFormRef);
       } finally {
         setLoadingSignUp(false);
       }

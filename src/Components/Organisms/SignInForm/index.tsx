@@ -31,7 +31,7 @@ const SignInForm: React.FC = () => {
         });
         await signIn(data);
       } catch (err) {
-        handleErrors(err, signInFormRef);
+        handleErrors('Error when signing in', err, signInFormRef);
       } finally {
         setLoadingSignIn(false);
       }
