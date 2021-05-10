@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Skeleton } from '@chakra-ui/react';
 
 import Table from 'Components/Molecules/Table';
 
@@ -6,7 +7,7 @@ import ITransfer from 'Entities/ITransfer';
 import formatDate from 'Helpers/formatDate';
 import api from 'Services/api';
 import formatWalletValue from 'Helpers/formatWalletValue';
-import { AlertDialogCloseButton } from '@chakra-ui/modal';
+import { useErrors } from 'Hooks/errors';
 
 interface IProps {
   walletId: string;
@@ -14,14 +15,18 @@ interface IProps {
 }
 
 const TransfersHistory: React.FC<IProps> = ({ walletId, updateTransfers }) => {
+  const { handleErrors } = useErrors();
+
   const limit = useMemo(() => 5, []);
 
   const [transfers, setTransfers] = useState([] as ITransfer[]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
-  const fetchTransactions = useCallback(async () => {
+  const fetchTransfers = useCallback(async () => {
     try {
+      setLoading(true);
       const response = await api.get('/transfers', {
         params: {
           limit,
@@ -31,89 +36,95 @@ const TransfersHistory: React.FC<IProps> = ({ walletId, updateTransfers }) => {
       });
       setTransfers(response.data.transfers);
       setTotal(response.data.total);
-    } catch {}
-  }, [limit, page, walletId, updateTransfers]);
+    } catch (err) {
+      handleErrors('Error when fetching transfers', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [limit, page, walletId, updateTransfers, handleErrors]);
 
   useEffect(() => {
-    fetchTransactions();
-  }, [fetchTransactions]);
+    fetchTransfers();
+  }, [fetchTransfers]);
 
   return (
-    <Table
-      rows={transfers}
-      columns={[
-        {
-          title: 'Date',
-          key: 'created_at',
-          render(transfer: ITransfer) {
-            return formatDate(transfer.created_at);
+    <Skeleton isLoaded={!loading}>
+      <Table
+        rows={transfers}
+        columns={[
+          {
+            title: 'Date',
+            key: 'created_at',
+            render(transfer: ITransfer) {
+              return formatDate(transfer.created_at);
+            },
           },
-        },
-        {
-          title: 'Value',
-          key: 'value',
-          render(transfer: ITransfer) {
-            const { value, from_wallet } = transfer;
-            return formatWalletValue(value, from_wallet);
+          {
+            title: 'Value',
+            key: 'value',
+            render(transfer: ITransfer) {
+              const { value, from_wallet } = transfer;
+              return formatWalletValue(value, from_wallet);
+            },
           },
-        },
-        {
-          title: 'Fee',
-          key: 'fee',
-          render(transfer: ITransfer) {
-            const {
-              static_rate,
-              percentual_rate,
-              value,
-              from_wallet,
-            } = transfer;
-            const fee =
-              Number(static_rate) +
-              (Number(percentual_rate) / 100) * Number(value);
-            return formatWalletValue(fee, from_wallet);
+          {
+            title: 'Fee',
+            key: 'fee',
+            render(transfer: ITransfer) {
+              const {
+                static_rate,
+                percentual_rate,
+                value,
+                from_wallet,
+              } = transfer;
+              const fee =
+                Number(static_rate) +
+                (Number(percentual_rate) / 100) * Number(value);
+              return formatWalletValue(fee, from_wallet);
+            },
           },
-        },
-        {
-          title: 'Filled',
-          key: 'filled',
-          render(transfer: ITransfer) {
-            const currency = transfer.to_wallet.currency.acronym;
-            const { filled } = transfer;
-            return `${Number(filled).toFixed(2)} ${currency}`;
+          {
+            title: 'Filled',
+            key: 'filled',
+            render(transfer: ITransfer) {
+              const currency = transfer.to_wallet.currency.acronym;
+              const { filled } = transfer;
+              return `${Number(filled).toFixed(2)} ${currency}`;
+            },
           },
-        },
-        {
-          title: 'From',
-          key: 'from',
-          render(transfer: ITransfer) {
-            const { from_wallet } = transfer;
-            if (!from_wallet || !from_wallet.currency) {
-              return '';
-            }
-            const { alias, acronym } = from_wallet.currency;
-            return `${alias} -  ${acronym}`;
+          {
+            title: 'From',
+            key: 'from',
+            render(transfer: ITransfer) {
+              const { from_wallet } = transfer;
+              if (!from_wallet || !from_wallet.currency) {
+                return '';
+              }
+              const { alias, acronym } = from_wallet.currency;
+              return `${alias} -  ${acronym}`;
+            },
           },
-        },
-        {
-          title: 'To',
-          key: 'to',
-          render(transfer: ITransfer) {
-            const { to_wallet } = transfer;
-            if (!to_wallet || !to_wallet.currency) {
-              return '';
-            }
-            const { alias, acronym } = to_wallet.currency;
-            return `${alias} -  ${acronym}`;
+          {
+            title: 'To',
+            key: 'to',
+            render(transfer: ITransfer) {
+              const { to_wallet } = transfer;
+              if (!to_wallet || !to_wallet.currency) {
+                return '';
+              }
+              const { alias, acronym } = to_wallet.currency;
+              return `${alias} -  ${acronym}`;
+            },
           },
-        },
-      ]}
-      pagination={{
-        limit,
-        total,
-        setPage,
-        currentPage: page,
-      }}
-    />
+        ]}
+        pagination={{
+          limit,
+          total,
+          setPage,
+          currentPage: page,
+        }}
+      />
+    </Skeleton>
   );
 };
 

@@ -6,7 +6,7 @@ import React, {
   useRef,
 } from 'react';
 import { FormHandles } from '@unform/core';
-import { Box, useToast } from '@chakra-ui/react';
+import { Box, Skeleton, useToast } from '@chakra-ui/react';
 
 import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
@@ -32,7 +32,8 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
   const formRef = useRef<FormHandles>(null);
 
   const [currencies, setCurrencies] = useState([] as ICurrency[]);
-  const [loading, setLoading] = useState(false);
+  const [loadingCreateWallet, setLoadingCreateWallet] = useState(false);
+  const [loadingFetchCurrencies, setLoadingFetchCurrencies] = useState(false);
 
   const currenciesOptions = useMemo(
     () =>
@@ -49,8 +50,10 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
 
   const fetchCurrencies = useCallback(async () => {
     try {
+      setLoadingFetchCurrencies(true);
       const response = await api.get('/currencies');
       setCurrencies(response.data);
+      setLoadingFetchCurrencies(false);
     } catch (err) {
       handleErrors('Error when fetching currencies', err);
     }
@@ -59,7 +62,7 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
   const handleCreateWallet = useCallback(
     async (data: ICreateWalletDTO) => {
       try {
-        setLoading(true);
+        setLoadingCreateWallet(true);
         formRef.current?.setErrors({});
 
         await createWallet.validate(data, {
@@ -83,7 +86,7 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
       } catch (err) {
         handleErrors('Error when creating a new wallet', err, formRef);
       } finally {
-        setLoading(false);
+        setLoadingCreateWallet(false);
       }
     },
     [formRef, onSuccess, handleErrors, toast],
@@ -96,11 +99,13 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
   return (
     <Box w="100%">
       <Form ref={formRef} onSubmit={handleCreateWallet}>
-        <Select
-          name="currency_id"
-          placeholder="Select a currency"
-          options={currenciesOptions}
-        />
+        <Skeleton isLoaded={!loadingFetchCurrencies}>
+          <Select
+            name="currency_id"
+            placeholder="Select a currency"
+            options={currenciesOptions}
+          />
+        </Skeleton>
         <Input
           name="alias"
           type="text"
@@ -111,7 +116,7 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
           type="number"
           placeholder="Type an optional initial balance"
         />
-        <Button isLoading={loading} type="submit" isPrimary>
+        <Button isLoading={loadingCreateWallet} type="submit" isPrimary>
           Create
         </Button>
       </Form>

@@ -6,7 +6,7 @@ import React, {
   useMemo,
 } from 'react';
 import { FormHandles } from '@unform/core';
-import { Box, useToast } from '@chakra-ui/react';
+import { Box, useToast, Skeleton } from '@chakra-ui/react';
 
 import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
@@ -32,7 +32,8 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
 
   const formRef = useRef<FormHandles>(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loadingFetchWallets, setLoadingFetchWallets] = useState(false);
+  const [loadingCreateTransfer, setLoadingCreateTransfer] = useState(false);
   const [wallets, setWallets] = useState([] as IWallet[]);
 
   const walletsOptions = useMemo<IOption[]>(
@@ -46,6 +47,8 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
 
   const fetchWallets = useCallback(async () => {
     try {
+      setLoadingFetchWallets(true);
+
       const newWallets = [] as IWallet[];
       const limit = 25;
       let page = 1;
@@ -64,6 +67,7 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
       }
 
       setWallets(newWallets.filter(wallet => wallet.id !== walletId));
+      setLoadingFetchWallets(false);
     } catch (err) {
       handleErrors('Error when fetching wallets', err);
     }
@@ -72,7 +76,7 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
   const handleCreateTransfer = useCallback(
     async (data: ICreateTransferDTO) => {
       try {
-        setLoading(true);
+        setLoadingCreateTransfer(true);
         formRef.current?.setErrors({});
 
         if (!data.static_rate) delete data.static_rate;
@@ -99,7 +103,7 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
       } catch (err) {
         handleErrors('Error when creating a new transfer', err, formRef);
       } finally {
-        setLoading(false);
+        setLoadingCreateTransfer(false);
       }
     },
     [formRef, onSuccess, walletId, handleErrors, toast],
@@ -112,11 +116,13 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
   return (
     <Box w="100%">
       <Form ref={formRef} onSubmit={handleCreateTransfer}>
-        <Select
-          label="Receiving wallet"
-          name="to_wallet_id"
-          options={walletsOptions}
-        />
+        <Skeleton isLoaded={!loadingFetchWallets}>
+          <Select
+            label="Receiving wallet"
+            name="to_wallet_id"
+            options={walletsOptions}
+          />
+        </Skeleton>
         <Input name="value" type="number" placeholder="Value" />
         <Input name="static_rate" type="number" placeholder="Static rate" />
         <Input
@@ -124,7 +130,7 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
           type="number"
           placeholder="Percentual rate"
         />
-        <Button isLoading={loading} type="submit" isPrimary>
+        <Button isLoading={loadingCreateTransfer} type="submit" isPrimary>
           Create
         </Button>
       </Form>
