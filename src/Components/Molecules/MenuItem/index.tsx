@@ -10,19 +10,25 @@ import {
 } from '@chakra-ui/react';
 import { FiCheckCircle } from 'react-icons/fi';
 
-import Icon from 'Components/Atoms/Icon';
+import IIconProps from 'Assets/Icons/IIconProps';
 
 import { Container } from './styles';
 
 interface IProps {
-  icon: string;
+  icon: React.ComponentType<IIconProps>;
   link: string;
   title: string;
   items: string[];
   palette: string[];
 }
 
-const MenuItem: React.FC<IProps> = ({ icon, items, palette, title, link }) => {
+const MenuItem: React.FC<IProps> = ({
+  icon: Icon,
+  items,
+  palette,
+  title,
+  link,
+}) => {
   return (
     <LinkBox w="100%" h="100%">
       <Center w="100%" h="100%">
@@ -36,7 +42,7 @@ const MenuItem: React.FC<IProps> = ({ icon, items, palette, title, link }) => {
           borderTopRadius="10px"
           borderColor={palette[3]}
         >
-          <Icon name={icon} color={palette[0]} />
+          <Icon color={palette[0]} />
           <Heading my="20px" color={palette[1]}>
             <LinkOverlay href={link}>{title}</LinkOverlay>
           </Heading>

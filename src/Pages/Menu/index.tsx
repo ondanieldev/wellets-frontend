@@ -1,6 +1,9 @@
 import React from 'react';
 import { Grid, useBreakpointValue } from '@chakra-ui/react';
 
+import Wallet from 'Assets/Icons/Wallet';
+import Unknown from 'Assets/Icons/Unknown';
+
 import PageContainer from 'Components/Atoms/PageContainer';
 import ContentContainer from 'Components/Atoms/ContentContainer';
 import MenuItem from 'Components/Molecules/MenuItem';
@@ -29,14 +32,14 @@ const Menu: React.FC = () => {
           h="100%"
         >
           <MenuItem
-            icon="unknown"
+            icon={Unknown}
             items={['Check our roadmap and help us to unlock this character']}
             palette={['#4299E1', '#63B3ED', '#3182CE', '#4299E1']}
             title="Coming soon"
             link="/"
           />
           <MenuItem
-            icon="wallet"
+            icon={Wallet}
             items={[
               'Create a new wallet',
               'View your wallets',
@@ -50,7 +53,7 @@ const Menu: React.FC = () => {
             link="/wallets"
           />
           <MenuItem
-            icon="unknow"
+            icon={Unknown}
             items={['Check our roadmap and help us to unlock this character']}
             palette={['#9F7AEA', '#B794F4', '#805AD5', '#9F7AEA']}
             title="Coming soon"

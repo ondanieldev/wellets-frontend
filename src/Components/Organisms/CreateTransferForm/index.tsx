@@ -16,17 +16,24 @@ import Button from 'Components/Atoms/Button';
 import { useErrors } from 'Hooks/errors';
 
 import ICreateTransferDTO from 'DTOs/ICreateTransferDTO';
+import IWallet from 'Entities/IWallet';
+import ICurrency from 'Entities/ICurrency';
 
 import api from 'Services/api';
 import createTransfer from 'Schemas/createTransfer';
-import IWallet from 'Entities/IWallet';
+import getCurrency from 'Helpers/getCurrency';
 
 interface IProps {
-  walletId: string;
+  wallet: IWallet;
+  currencies: ICurrency[];
   onSuccess?: () => void;
 }
 
-const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
+const CreateTransferForm: React.FC<IProps> = ({
+  wallet,
+  currencies,
+  onSuccess,
+}) => {
   const toast = useToast();
   const { handleErrors } = useErrors();
 
@@ -35,15 +42,37 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
   const [loadingFetchWallets, setLoadingFetchWallets] = useState(false);
   const [loadingCreateTransfer, setLoadingCreateTransfer] = useState(false);
   const [wallets, setWallets] = useState([] as IWallet[]);
+  const [targetWallet, setTargetWallet] = useState({} as IWallet);
 
   const walletsOptions = useMemo<IOption[]>(
     () =>
-      wallets.map(wallet => ({
-        value: wallet.id,
-        label: wallet.alias,
+      wallets.map(w => ({
+        value: w.id,
+        label: w.alias,
       })),
     [wallets],
   );
+
+  const valuePlaceholder = useMemo(
+    () => `Value (${getCurrency(currencies, wallet.currency_id)})`,
+    [wallet, currencies],
+  );
+
+  const staticFeePlaceholder = useMemo(() => {
+    if (!targetWallet.currency_id && !wallets[0]) {
+      return 'Optional static fee';
+    }
+    const id = targetWallet.currency_id || wallets[0].currency_id;
+    return `Optional static fee (${getCurrency(currencies, id)})`;
+  }, [targetWallet, currencies, wallets]);
+
+  const percentualFeePlaceholder = useMemo(() => {
+    if (!targetWallet.currency_id && !wallets[0]) {
+      return 'Optional percentual fee';
+    }
+    const id = targetWallet.currency_id || wallets[0].currency_id;
+    return `Optional percentual fee (${getCurrency(currencies, id)})`;
+  }, [targetWallet, currencies, wallets]);
 
   const fetchWallets = useCallback(async () => {
     try {
@@ -66,12 +95,19 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
         page++;
       }
 
-      setWallets(newWallets.filter(wallet => wallet.id !== walletId));
+      setWallets(newWallets.filter(w => w.id !== wallet.id));
       setLoadingFetchWallets(false);
     } catch (err) {
       handleErrors('Error when fetching wallets', err);
     }
-  }, [walletId, handleErrors]);
+  }, [wallet, handleErrors]);
+
+  const fetchTargetWallet = useCallback(async (id: string) => {
+    try {
+      const response = await api.get(`wallets/${id}`);
+      setTargetWallet(response.data);
+    } catch {}
+  }, []);
 
   const handleCreateTransfer = useCallback(
     async (data: ICreateTransferDTO) => {
@@ -79,12 +115,12 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
         setLoadingCreateTransfer(true);
         formRef.current?.setErrors({});
 
-        if (!data.static_rate) delete data.static_rate;
-        if (!data.percentual_rate) delete data.percentual_rate;
+        if (!data.static_fee) delete data.static_fee;
+        if (!data.percentual_fee) delete data.percentual_fee;
         await createTransfer.validate(data, {
           abortEarly: false,
         });
-        data.from_wallet_id = walletId;
+        data.from_wallet_id = wallet.id;
 
         await api.post('/transfers', data);
 
@@ -106,7 +142,7 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
         setLoadingCreateTransfer(false);
       }
     },
-    [formRef, onSuccess, walletId, handleErrors, toast],
+    [formRef, onSuccess, wallet, handleErrors, toast],
   );
 
   useEffect(() => {
@@ -121,14 +157,19 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
             label="Receiving wallet"
             name="to_wallet_id"
             options={walletsOptions}
+            onChange={e => fetchTargetWallet(e.target.value)}
           />
         </Skeleton>
-        <Input name="value" type="number" placeholder="Value" />
-        <Input name="static_rate" type="number" placeholder="Static rate" />
+        <Input name="value" type="number" placeholder={valuePlaceholder} />
         <Input
-          name="percentual_rate"
+          name="static_fee"
           type="number"
-          placeholder="Percentual rate"
+          placeholder={staticFeePlaceholder}
+        />
+        <Input
+          name="percentual_fee"
+          type="number"
+          placeholder={percentualFeePlaceholder}
         />
         <Button isLoading={loadingCreateTransfer} type="submit" isPrimary>
           Create

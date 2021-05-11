@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 import { FormHandles } from '@unform/core';
 import { Box, useToast } from '@chakra-ui/react';
 
@@ -10,26 +10,39 @@ import Button from 'Components/Atoms/Button';
 import { useErrors } from 'Hooks/errors';
 
 import ICreateTransactionDTO from 'DTOs/ICreateTransactionDTO';
+import ICurrency from 'Entities/ICurrency';
+import IWallet from 'Entities/IWallet';
 
 import api from 'Services/api';
 import createTransaction from 'Schemas/createTransaction';
+import getCurrency from 'Helpers/getCurrency';
 
 interface ICreateTransaction extends ICreateTransactionDTO {
-  type?: 'credit' | 'debit';
+  type?: 'incoming' | 'outcoming';
 }
 
 interface IProps {
-  walletId: string;
+  wallet: IWallet;
+  currencies: ICurrency[];
   onSuccess?: () => void;
 }
 
-const CreateTransactionForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
+const CreateTransactionForm: React.FC<IProps> = ({
+  wallet,
+  currencies,
+  onSuccess,
+}) => {
   const toast = useToast();
   const { handleErrors } = useErrors();
 
   const formRef = useRef<FormHandles>(null);
 
   const [loading, setLoading] = useState(false);
+
+  const valuePlaceholder = useMemo(
+    () => `Value (${getCurrency(currencies, wallet.currency_id)})`,
+    [wallet, currencies],
+  );
 
   const handleCreateTransaction = useCallback(
     async (data: ICreateTransaction) => {
@@ -40,9 +53,9 @@ const CreateTransactionForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
         await createTransaction.validate(data, {
           abortEarly: false,
         });
-        data.value = data.type === 'debit' ? data.value * -1 : data.value;
+        data.value = data.type === 'outcoming' ? data.value * -1 : data.value;
         delete data.type;
-        data.wallet_id = walletId;
+        data.wallet_id = wallet.id;
 
         await api.post('/transactions', data);
 
@@ -64,19 +77,19 @@ const CreateTransactionForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
         setLoading(false);
       }
     },
-    [formRef, onSuccess, walletId, toast, handleErrors],
+    [formRef, onSuccess, wallet, toast, handleErrors],
   );
 
   return (
     <Box w="100%">
       <Form ref={formRef} onSubmit={handleCreateTransaction}>
-        <Input name="value" type="number" placeholder="Value" />
+        <Input name="value" type="number" placeholder={valuePlaceholder} />
         <Input name="description" type="text" placeholder="Description" />
         <Radio
           name="type"
           options={[
-            { id: 'credit', value: 'credit', label: 'Credit' },
-            { id: 'debit', value: 'debit', label: 'Debit' },
+            { id: 'incoming', value: 'incoming', label: 'Incoming' },
+            { id: 'outcoming', value: 'outcoming', label: 'Outcoming' },
           ]}
         />
         <Button isLoading={loading} type="submit" isPrimary>

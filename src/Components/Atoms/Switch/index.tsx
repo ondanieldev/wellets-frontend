@@ -37,13 +37,13 @@ const Switch: React.FC<ISwitchProps> = ({
   return (
     <Box {...rest}>
       <LeftButton
-        active={(active === 'left').toString()}
+        active={active === 'left'}
         onClick={() => handleClick('left')}
       >
         {leftText}
       </LeftButton>
       <RightButton
-        active={(active === 'right').toString()}
+        active={active === 'right'}
         onClick={() => handleClick('right')}
       >
         {rightText}
