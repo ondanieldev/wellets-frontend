@@ -12,6 +12,8 @@ import {
 } from '@chakra-ui/react';
 
 import Button from 'Components/Atoms/Button';
+import Form from 'Components/Atoms/Form';
+import Select, { IOption } from 'Components/Atoms/Select';
 import PageContainer from 'Components/Atoms/PageContainer';
 import ContentContainer from 'Components/Atoms/ContentContainer';
 import Table from 'Components/Molecules/Table';
@@ -22,11 +24,13 @@ import { useErrors } from 'Hooks/errors';
 
 import ICurrency from 'Entities/ICurrency';
 import IWallet from 'Entities/IWallet';
-import api from 'Services/api';
+
 import formatWalletValue from 'Helpers/formatWalletValue';
+import api from 'Services/api';
 
 const Wallets: React.FC = () => {
   const { handleErrors } = useErrors();
+
   const toast = useToast();
   const stack = useBreakpointValue({
     base: {
@@ -44,8 +48,22 @@ const Wallets: React.FC = () => {
   const [loadingDeleteWallet, setLoadingDeleteWallet] = useState(false);
   const [loadingFetchWallets, setLoadingFetchWallets] = useState(false);
   const [loadingFetchCurrencies, setLoadingFetchCurrencies] = useState(false);
+  const [loadingFetchTotalBalance, setLoadingFetchTotalBalance] = useState(
+    false,
+  );
+  const [baseCurrencyId, setBaseCurrencyId] = useState('');
+  const [totalBalance, setTotalBalance] = useState(0);
 
   const limit = useMemo(() => 5, []);
+
+  const currenciesOptions = useMemo<IOption[]>(
+    () =>
+      currencies.map(c => ({
+        label: c.acronym,
+        value: c.id,
+      })),
+    [currencies],
+  );
 
   const fetchWallets = useCallback(async () => {
     try {
@@ -110,10 +128,39 @@ const Wallets: React.FC = () => {
     [toast, fetchWallets, handleErrors],
   );
 
+  const fetchTotalBalance = useCallback(
+    async (id: string) => {
+      try {
+        setLoadingFetchTotalBalance(true);
+        const response = await api.get('/wallets/total-balance', {
+          params: {
+            base_currency_id: id,
+          },
+        });
+        setTotalBalance(response.data.total_balance.toFixed(8));
+        setLoadingFetchTotalBalance(false);
+      } catch (err) {
+        handleErrors('Error when calculating total balance', err);
+      }
+    },
+    [handleErrors],
+  );
+
   useEffect(() => {
     fetchWallets();
     fetchCurrencies();
   }, [fetchWallets, fetchCurrencies]);
+
+  useEffect(() => {
+    if (!baseCurrencyId) {
+      if (!wallets[0]) return;
+      const { currency_id } = wallets[0];
+      setBaseCurrencyId(currency_id);
+      fetchTotalBalance(currency_id);
+      return;
+    }
+    fetchTotalBalance(baseCurrencyId);
+  }, [fetchTotalBalance, baseCurrencyId, wallets]);
 
   return (
     <PageContainer>
@@ -121,6 +168,24 @@ const Wallets: React.FC = () => {
 
       <ContentContainer flexDirection="column" justifyContent="start">
         <Heading>Wallets</Heading>
+
+        <Skeleton
+          isLoaded={!loadingFetchCurrencies && !loadingFetchTotalBalance}
+        >
+          <Flex alignItems="center">
+            <Heading size="md" mr="10px">
+              {` You have, approximately, ${totalBalance}`}
+            </Heading>
+            <Form onSubmit={() => {}}>
+              <Select
+                onChange={e => setBaseCurrencyId(e.target.value)}
+                name="base_currency_id"
+                options={currenciesOptions}
+                value={baseCurrencyId}
+              />
+            </Form>
+          </Flex>
+        </Skeleton>
 
         <Stack mt="50px" w="100%" direction={stack?.direction} spacing="25px">
           <Skeleton isLoaded={!loadingFetchWallets && !loadingFetchCurrencies}>
