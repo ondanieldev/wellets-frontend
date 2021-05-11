@@ -15,7 +15,7 @@ import api from 'Services/api';
 import createTransaction from 'Schemas/createTransaction';
 
 interface ICreateTransaction extends ICreateTransactionDTO {
-  type?: 'credit' | 'debit';
+  type?: 'incoming' | 'outcoming';
 }
 
 interface IProps {
@@ -40,7 +40,7 @@ const CreateTransactionForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
         await createTransaction.validate(data, {
           abortEarly: false,
         });
-        data.value = data.type === 'debit' ? data.value * -1 : data.value;
+        data.value = data.type === 'outcoming' ? data.value * -1 : data.value;
         delete data.type;
         data.wallet_id = walletId;
 
@@ -75,8 +75,8 @@ const CreateTransactionForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
         <Radio
           name="type"
           options={[
-            { id: 'credit', value: 'credit', label: 'Credit' },
-            { id: 'debit', value: 'debit', label: 'Debit' },
+            { id: 'incoming', value: 'incoming', label: 'Incoming' },
+            { id: 'outcoming', value: 'outcoming', label: 'Outcoming' },
           ]}
         />
         <Button isLoading={loading} type="submit" isPrimary>

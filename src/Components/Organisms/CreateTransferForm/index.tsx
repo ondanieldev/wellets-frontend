@@ -124,11 +124,15 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
           />
         </Skeleton>
         <Input name="value" type="number" placeholder="Value" />
-        <Input name="static_rate" type="number" placeholder="Static rate" />
+        <Input
+          name="static_rate"
+          type="number"
+          placeholder="Static fee (optional)"
+        />
         <Input
           name="percentual_rate"
           type="number"
-          placeholder="Percentual rate"
+          placeholder="Percentual fee (optional)"
         />
         <Button isLoading={loadingCreateTransfer} type="submit" isPrimary>
           Create

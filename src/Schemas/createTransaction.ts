@@ -8,8 +8,8 @@ export default Yup.object().shape({
   description: Yup.string().required('description required'),
   type: Yup.string()
     .equals(
-      ['credit', 'debit'],
-      'you must specify if the transaction is a credit or a debit',
+      ['incoming', 'outcoming'],
+      'you must specify if the transaction is a incoming or a outcoming',
     )
     .required('description required'),
 });
