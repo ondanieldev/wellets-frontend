@@ -24,6 +24,7 @@ import TransactionsHistory from 'Components/Organisms/TransactionsHistory';
 import TransfersHistory from 'Components/Organisms/TransfersHistory';
 import IWallet from 'Entities/IWallet';
 import { useErrors } from 'Hooks/errors';
+import ICurrency from 'Entities/ICurrency';
 
 interface IParams {
   id: string;
@@ -43,9 +44,11 @@ const Wallet: React.FC = () => {
   });
 
   const [wallet, setWallet] = useState({} as IWallet);
+  const [currencies, setCurrencies] = useState([] as ICurrency[]);
   const [updateTransactions, setUpdateTransactions] = useState(0);
   const [updateTransfers, setUpdateTransfers] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loadingFetchWallet, setLoadingFetchWallet] = useState(false);
+  const [loadingFetchCurrencies, setLoadingFetchCurrencies] = useState(false);
 
   const title = useMemo(() => {
     if (!wallet.alias || !wallet.currency) {
@@ -56,25 +59,37 @@ const Wallet: React.FC = () => {
 
   const fetchWallet = useCallback(async () => {
     try {
-      setLoading(true);
+      setLoadingFetchWallet(true);
       const { id } = params;
       const response = await api.get(`wallets/${id}`);
       setWallet(response.data);
-      setLoading(false);
+      setLoadingFetchWallet(false);
     } catch (err) {
       handleErrors('Error when fetchin wallet data', err);
     }
   }, [params, handleErrors]);
 
+  const fetchCurrencies = useCallback(async () => {
+    try {
+      setLoadingFetchCurrencies(true);
+      const response = await api.get('/currencies');
+      setCurrencies(response.data);
+      setLoadingFetchCurrencies(false);
+    } catch (err) {
+      handleErrors('Error when fetching currencies', err);
+    }
+  }, [handleErrors]);
+
   useEffect(() => {
     fetchWallet();
-  }, [fetchWallet]);
+    fetchCurrencies();
+  }, [fetchWallet, fetchCurrencies]);
 
   return (
     <PageContainer>
       <Header />
 
-      <Skeleton isLoaded={!loading}>
+      <Skeleton isLoaded={!loadingFetchWallet && !loadingFetchCurrencies}>
         <ContentContainer flexDirection="column" justifyContent="start">
           {title && <Heading>{title}</Heading>}
 
@@ -92,7 +107,8 @@ const Wallet: React.FC = () => {
                     updateTransactions={updateTransactions}
                   />
                   <CreateTransactionForm
-                    walletId={params.id}
+                    wallet={wallet}
+                    currencies={currencies}
                     onSuccess={() =>
                       setUpdateTransactions(updateTransactions + 1)
                     }
@@ -106,7 +122,8 @@ const Wallet: React.FC = () => {
                     updateTransfers={updateTransfers}
                   />
                   <CreateTransferForm
-                    walletId={params.id}
+                    wallet={wallet}
+                    currencies={currencies}
                     onSuccess={() => setUpdateTransfers(updateTransfers + 1)}
                   />
                 </Stack>

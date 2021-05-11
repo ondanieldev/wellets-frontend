@@ -6,10 +6,10 @@ export default Yup.object().shape({
     .typeError('value must be a number')
     .required('value required')
     .positive('value must be positive'),
-  static_rate: Yup.number()
+  static_fee: Yup.number()
     .typeError('static fee must be a number')
     .positive('static fee must be positive'),
-  percentual_rate: Yup.number()
+  percentual_fee: Yup.number()
     .typeError('percentual fee must be a number')
     .positive('percentual fee must be positive'),
 });

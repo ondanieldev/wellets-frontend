@@ -26,6 +26,7 @@ import ICurrency from 'Entities/ICurrency';
 import IWallet from 'Entities/IWallet';
 
 import formatWalletValue from 'Helpers/formatWalletValue';
+import getCurrency from 'Helpers/getCurrency';
 import api from 'Services/api';
 
 const Wallets: React.FC = () => {
@@ -94,17 +95,6 @@ const Wallets: React.FC = () => {
       setLoadingFetchCurrencies(false);
     }
   }, [handleErrors]);
-
-  const getCurrency = useCallback(
-    (id: string): string => {
-      const currency = currencies.find(c => c.id === id);
-      if (!currency) {
-        return id;
-      }
-      return currency.acronym;
-    },
-    [currencies],
-  );
 
   const handleDeleteWallet = useCallback(
     async (id: string) => {
@@ -201,7 +191,7 @@ const Wallets: React.FC = () => {
                   title: 'Currency',
                   key: 'currency',
                   render(wallet: IWallet) {
-                    return getCurrency(wallet.currency_id);
+                    return getCurrency(currencies, wallet.currency_id);
                   },
                 },
                 {
@@ -209,7 +199,7 @@ const Wallets: React.FC = () => {
                   key: 'balance',
                   render(wallet: IWallet) {
                     const { balance, currency_id } = wallet;
-                    const currency = getCurrency(currency_id);
+                    const currency = getCurrency(currencies, currency_id);
                     return formatWalletValue(balance, wallet, currency);
                   },
                 },
