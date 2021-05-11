@@ -16,7 +16,6 @@ export const Container = styled(Box)<IProps>`
   cursor: pointer;
 
   &:hover {
-    transform: scale(1.02);
     border: 5px solid;
     ${({ borderColor }) =>
       css`

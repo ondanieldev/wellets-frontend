@@ -1,7 +1,9 @@
 import React from 'react';
-import AuthProvider from './auth';
 
-const providers = [AuthProvider];
+import AuthProvider from './auth';
+import ErrorsProvider from './errors';
+
+const providers = [AuthProvider, ErrorsProvider];
 
 const CombineProviders: React.FC = ({ children }) => {
   return (

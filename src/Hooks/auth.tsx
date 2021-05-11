@@ -65,9 +65,9 @@ export const AuthProvider: React.FC = ({ children }) => {
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
-    // api.get('/users/sessions').catch(() => {
-    //   signOut();
-    // });
+    api.get('/users/sessions').catch(() => {
+      signOut();
+    });
   }, [signOut]);
 
   return (

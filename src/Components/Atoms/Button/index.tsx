@@ -1,30 +1,62 @@
 import React from 'react';
 
-import { Button as BaseButton, ButtonProps } from '@chakra-ui/react';
+import {
+  Button as BaseButton,
+  ButtonProps,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverTrigger,
+  Portal,
+} from '@chakra-ui/react';
 
 interface IProps extends ButtonProps {
   isPrimary?: boolean;
+  confirmation?: {
+    body: string;
+    buttonText: string;
+    colorSchema: string;
+  };
 }
 
-const Button: React.FC<IProps> = ({ isPrimary, ...rest }) => {
+const Button: React.FC<IProps> = ({
+  isPrimary,
+  confirmation,
+  onClick,
+  ...rest
+}) => {
   return (
-    <>
-      {isPrimary ? (
+    <Popover>
+      <PopoverTrigger>
         <BaseButton
           variant="outline"
-          colorScheme="green"
+          colorScheme={isPrimary ? 'green' : 'white'}
           loadingText="Loading"
+          onClick={confirmation ? () => {} : onClick}
           {...rest}
         />
-      ) : (
-        <BaseButton
-          variant="outline"
-          colorScheme="white"
-          loadingText="Loading"
-          {...rest}
-        />
+      </PopoverTrigger>
+      {confirmation && (
+        <Portal>
+          <PopoverContent>
+            <PopoverArrow />
+            <PopoverCloseButton />
+            <PopoverBody>
+              {confirmation.body}
+              <BaseButton
+                mt="10px"
+                onClick={onClick}
+                colorScheme={confirmation.colorSchema}
+              >
+                {confirmation.buttonText}
+              </BaseButton>
+            </PopoverBody>
+          </PopoverContent>
+        </Portal>
       )}
-    </>
+    </Popover>
   );
 };
 

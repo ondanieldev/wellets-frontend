@@ -1,15 +1,15 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { FormHandles } from '@unform/core';
-import { Button } from '@chakra-ui/react';
-import { toast } from 'react-toastify';
+import { Button, useToast } from '@chakra-ui/react';
 
 import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
 
+import { useErrors } from 'Hooks/errors';
+
 import ISignUpDTO from 'DTOs/ISignUpDTO';
 
 import signUpSchema from 'Schemas/signUp';
-import handleErrors from 'Helpers/handleErrors';
 import api from 'Services/api';
 
 interface IProps {
@@ -17,6 +17,9 @@ interface IProps {
 }
 
 const SignUpForm: React.FC<IProps> = ({ onSuccess }) => {
+  const toast = useToast();
+  const { handleErrors } = useErrors();
+
   const signUpFormRef = useRef<FormHandles>(null);
 
   const [loadingSignUp, setLoadingSignUp] = useState(false);
@@ -32,15 +35,21 @@ const SignUpForm: React.FC<IProps> = ({ onSuccess }) => {
         });
         delete data.confirm_password;
         await api.post('/users', data);
-        toast.success('Your account was successfully created!');
+        toast({
+          title: 'Your account has been successfully created!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
         onSuccess();
       } catch (err) {
-        handleErrors(err, signUpFormRef);
+        handleErrors('Error when signing up', err, signUpFormRef);
       } finally {
         setLoadingSignUp(false);
       }
     },
-    [loadingSignUp, signUpFormRef, onSuccess],
+    [loadingSignUp, signUpFormRef, onSuccess, handleErrors, toast],
   );
 
   return (

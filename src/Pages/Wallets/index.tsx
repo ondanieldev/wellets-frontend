@@ -6,6 +6,9 @@ import {
   Flex,
   Stack,
   Heading,
+  useBreakpointValue,
+  StackDirection,
+  Skeleton,
 } from '@chakra-ui/react';
 
 import Button from 'Components/Atoms/Button';
@@ -15,24 +18,38 @@ import Table from 'Components/Molecules/Table';
 import CreateWalletForm from 'Components/Organisms/CreateWalletForm';
 import Header from 'Components/Organisms/Header';
 
+import { useErrors } from 'Hooks/errors';
+
 import ICurrency from 'Entities/ICurrency';
 import IWallet from 'Entities/IWallet';
 import api from 'Services/api';
-import handleErrors from 'Helpers/handleErrors';
+import formatWalletValue from 'Helpers/formatWalletValue';
 
 const Wallets: React.FC = () => {
+  const { handleErrors } = useErrors();
   const toast = useToast();
+  const stack = useBreakpointValue({
+    base: {
+      direction: 'column' as StackDirection,
+    },
+    lg: {
+      direction: 'row' as StackDirection,
+    },
+  });
 
   const [currencies, setCurrencies] = useState([] as ICurrency[]);
   const [wallets, setWallets] = useState([] as IWallet[]);
   const [totalWallets, setTotalWallets] = useState(0);
   const [page, setPage] = useState(1);
   const [loadingDeleteWallet, setLoadingDeleteWallet] = useState(false);
+  const [loadingFetchWallets, setLoadingFetchWallets] = useState(false);
+  const [loadingFetchCurrencies, setLoadingFetchCurrencies] = useState(false);
 
   const limit = useMemo(() => 5, []);
 
   const fetchWallets = useCallback(async () => {
     try {
+      setLoadingFetchWallets(true);
       const response = await api.get('/wallets', {
         params: {
           page,
@@ -42,16 +59,23 @@ const Wallets: React.FC = () => {
       setWallets(response.data.wallets);
       setTotalWallets(response.data.total);
     } catch (err) {
-      handleErrors(err);
+      handleErrors('Error when fetching wallets', err);
+    } finally {
+      setLoadingFetchWallets(false);
     }
-  }, [page, limit]);
+  }, [page, limit, handleErrors]);
 
   const fetchCurrencies = useCallback(async () => {
     try {
+      setLoadingFetchCurrencies(true);
       const response = await api.get('/currencies');
       setCurrencies(response.data);
-    } catch {}
-  }, []);
+    } catch (err) {
+      handleErrors('Error when fetching currencies', err);
+    } finally {
+      setLoadingFetchCurrencies(false);
+    }
+  }, [handleErrors]);
 
   const getCurrency = useCallback(
     (id: string): string => {
@@ -59,7 +83,7 @@ const Wallets: React.FC = () => {
       if (!currency) {
         return id;
       }
-      return currency.alias;
+      return currency.acronym;
     },
     [currencies],
   );
@@ -78,12 +102,12 @@ const Wallets: React.FC = () => {
         });
         fetchWallets();
       } catch (err) {
-        handleErrors(err);
+        handleErrors('Error when deleting wallet', err);
       } finally {
         setLoadingDeleteWallet(false);
       }
     },
-    [toast, fetchWallets],
+    [toast, fetchWallets, handleErrors],
   );
 
   useEffect(() => {
@@ -98,59 +122,71 @@ const Wallets: React.FC = () => {
       <ContentContainer flexDirection="column" justifyContent="start">
         <Heading>Wallets</Heading>
 
-        <Stack mt="50px" w="100%" direction="row" spacing="25px">
-          <Table
-            rows={wallets}
-            columns={[
-              {
-                title: 'Alias',
-                key: 'alias',
-                dataIndex: 'alias',
-              },
-              {
-                title: 'Currency',
-                key: 'currency',
-                render(wallet: IWallet) {
-                  return getCurrency(wallet.currency_id);
+        <Stack mt="50px" w="100%" direction={stack?.direction} spacing="25px">
+          <Skeleton isLoaded={!loadingFetchWallets && !loadingFetchCurrencies}>
+            <Table
+              rows={wallets}
+              columns={[
+                {
+                  title: 'Alias',
+                  key: 'alias',
+                  dataIndex: 'alias',
                 },
-              },
-              {
-                title: 'Balance',
-                key: 'balance',
-                dataIndex: 'balance',
-              },
-              {
-                title: 'Actions',
-                key: 'actions',
-                render(wallet: IWallet) {
-                  return (
-                    <Flex>
-                      <LinkBox>
-                        <Button mr="10px">
-                          <LinkOverlay href={`/wallets/${wallet.id}`}>
-                            View
-                          </LinkOverlay>
+                {
+                  title: 'Currency',
+                  key: 'currency',
+                  render(wallet: IWallet) {
+                    return getCurrency(wallet.currency_id);
+                  },
+                },
+                {
+                  title: 'Balance',
+                  key: 'balance',
+                  render(wallet: IWallet) {
+                    const { balance, currency_id } = wallet;
+                    const currency = getCurrency(currency_id);
+                    return formatWalletValue(balance, wallet, currency);
+                  },
+                },
+                {
+                  title: 'Actions',
+                  key: 'actions',
+                  render(wallet: IWallet) {
+                    return (
+                      <Flex>
+                        <LinkBox>
+                          <Button mr="10px">
+                            <LinkOverlay href={`/wallets/${wallet.id}`}>
+                              View
+                            </LinkOverlay>
+                          </Button>
+                        </LinkBox>
+                        <Button
+                          type="button"
+                          isLoading={loadingDeleteWallet}
+                          onClick={() => handleDeleteWallet(wallet.id)}
+                          confirmation={{
+                            body:
+                              'Are you sure you want to delete this wallet? All data attached to it will be lost.',
+                            buttonText: 'I am sure',
+                            colorSchema: 'red',
+                          }}
+                        >
+                          Delete
                         </Button>
-                      </LinkBox>
-                      <Button
-                        type="button"
-                        isLoading={loadingDeleteWallet}
-                        onClick={() => handleDeleteWallet(wallet.id)}
-                      >
-                        Delete
-                      </Button>
-                    </Flex>
-                  );
+                      </Flex>
+                    );
+                  },
                 },
-              },
-            ]}
-            pagination={{
-              limit,
-              currentPage: page,
-              total: totalWallets,
-              setPage,
-            }}
-          />
+              ]}
+              pagination={{
+                limit,
+                currentPage: page,
+                total: totalWallets,
+                setPage,
+              }}
+            />
+          </Skeleton>
 
           <CreateWalletForm onSuccess={fetchWallets} />
         </Stack>

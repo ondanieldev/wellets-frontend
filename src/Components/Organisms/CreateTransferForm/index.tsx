@@ -6,19 +6,19 @@ import React, {
   useMemo,
 } from 'react';
 import { FormHandles } from '@unform/core';
-import { toast } from 'react-toastify';
-import { Box } from '@chakra-ui/react';
+import { Box, useToast, Skeleton } from '@chakra-ui/react';
 
 import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
 import Select, { IOption } from 'Components/Atoms/Select';
 import Button from 'Components/Atoms/Button';
 
+import { useErrors } from 'Hooks/errors';
+
 import ICreateTransferDTO from 'DTOs/ICreateTransferDTO';
 
 import api from 'Services/api';
 import createTransfer from 'Schemas/createTransfer';
-import handleErrors from 'Helpers/handleErrors';
 import IWallet from 'Entities/IWallet';
 
 interface IProps {
@@ -27,9 +27,13 @@ interface IProps {
 }
 
 const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
+  const toast = useToast();
+  const { handleErrors } = useErrors();
+
   const formRef = useRef<FormHandles>(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loadingFetchWallets, setLoadingFetchWallets] = useState(false);
+  const [loadingCreateTransfer, setLoadingCreateTransfer] = useState(false);
   const [wallets, setWallets] = useState([] as IWallet[]);
 
   const walletsOptions = useMemo<IOption[]>(
@@ -43,6 +47,8 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
 
   const fetchWallets = useCallback(async () => {
     try {
+      setLoadingFetchWallets(true);
+
       const newWallets = [] as IWallet[];
       const limit = 25;
       let page = 1;
@@ -61,13 +67,16 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
       }
 
       setWallets(newWallets.filter(wallet => wallet.id !== walletId));
-    } catch {}
-  }, [walletId]);
+      setLoadingFetchWallets(false);
+    } catch (err) {
+      handleErrors('Error when fetching wallets', err);
+    }
+  }, [walletId, handleErrors]);
 
   const handleCreateTransfer = useCallback(
     async (data: ICreateTransferDTO) => {
       try {
-        setLoading(true);
+        setLoadingCreateTransfer(true);
         formRef.current?.setErrors({});
 
         if (!data.static_rate) delete data.static_rate;
@@ -80,18 +89,24 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
         await api.post('/transfers', data);
 
         formRef.current?.reset();
-        toast.success('Transfer successfully created');
+        toast({
+          title: 'A new transfer has been successfully created!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
 
         if (onSuccess) {
           onSuccess();
         }
       } catch (err) {
-        handleErrors(err, formRef);
+        handleErrors('Error when creating a new transfer', err, formRef);
       } finally {
-        setLoading(false);
+        setLoadingCreateTransfer(false);
       }
     },
-    [formRef, onSuccess, walletId],
+    [formRef, onSuccess, walletId, handleErrors, toast],
   );
 
   useEffect(() => {
@@ -101,11 +116,13 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
   return (
     <Box w="100%">
       <Form ref={formRef} onSubmit={handleCreateTransfer}>
-        <Select
-          label="Receiving wallet"
-          name="to_wallet_id"
-          options={walletsOptions}
-        />
+        <Skeleton isLoaded={!loadingFetchWallets}>
+          <Select
+            label="Receiving wallet"
+            name="to_wallet_id"
+            options={walletsOptions}
+          />
+        </Skeleton>
         <Input name="value" type="number" placeholder="Value" />
         <Input name="static_rate" type="number" placeholder="Static rate" />
         <Input
@@ -113,7 +130,7 @@ const CreateTransferForm: React.FC<IProps> = ({ walletId, onSuccess }) => {
           type="number"
           placeholder="Percentual rate"
         />
-        <Button isLoading={loading} type="submit" isPrimary>
+        <Button isLoading={loadingCreateTransfer} type="submit" isPrimary>
           Create
         </Button>
       </Form>

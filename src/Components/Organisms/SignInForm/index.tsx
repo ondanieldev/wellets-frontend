@@ -8,12 +8,13 @@ import Button from 'Components/Atoms/Button';
 import ISignInDTO from 'DTOs/ISignInDTO';
 
 import { useAuth } from 'Hooks/auth';
+import { useErrors } from 'Hooks/errors';
 
 import signInSchema from 'Schemas/signIn';
-import handleErrors from 'Helpers/handleErrors';
 
 const SignInForm: React.FC = () => {
   const { signIn } = useAuth();
+  const { handleErrors } = useErrors();
 
   const signInFormRef = useRef<FormHandles>(null);
 
@@ -30,12 +31,12 @@ const SignInForm: React.FC = () => {
         });
         await signIn(data);
       } catch (err) {
-        handleErrors(err, signInFormRef);
+        handleErrors('Error when signing in', err, signInFormRef);
       } finally {
         setLoadingSignIn(false);
       }
     },
-    [loadingSignIn, signInFormRef, signIn],
+    [loadingSignIn, signInFormRef, signIn, handleErrors],
   );
 
   return (

@@ -6,30 +6,34 @@ import React, {
   useRef,
 } from 'react';
 import { FormHandles } from '@unform/core';
-import { toast } from 'react-toastify';
-import { Box } from '@chakra-ui/react';
+import { Box, Skeleton, useToast } from '@chakra-ui/react';
 
 import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
 import Select, { IOption } from 'Components/Atoms/Select';
 import Button from 'Components/Atoms/Button';
 
+import { useErrors } from 'Hooks/errors';
+
 import ICurrency from 'Entities/ICurrency';
 import ICreateWalletDTO from 'DTOs/ICreateWalletDTO';
 
 import api from 'Services/api';
 import createWallet from 'Schemas/createWallet';
-import handleErrors from 'Helpers/handleErrors';
 
 interface IProps {
   onSuccess?: () => void;
 }
 
 const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
+  const toast = useToast();
+  const { handleErrors } = useErrors();
+
   const formRef = useRef<FormHandles>(null);
 
   const [currencies, setCurrencies] = useState([] as ICurrency[]);
-  const [loading, setLoading] = useState(false);
+  const [loadingCreateWallet, setLoadingCreateWallet] = useState(false);
+  const [loadingFetchCurrencies, setLoadingFetchCurrencies] = useState(false);
 
   const currenciesOptions = useMemo(
     () =>
@@ -44,10 +48,21 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
     [currencies],
   );
 
+  const fetchCurrencies = useCallback(async () => {
+    try {
+      setLoadingFetchCurrencies(true);
+      const response = await api.get('/currencies');
+      setCurrencies(response.data);
+      setLoadingFetchCurrencies(false);
+    } catch (err) {
+      handleErrors('Error when fetching currencies', err);
+    }
+  }, [handleErrors]);
+
   const handleCreateWallet = useCallback(
     async (data: ICreateWalletDTO) => {
       try {
-        setLoading(true);
+        setLoadingCreateWallet(true);
         formRef.current?.setErrors({});
 
         await createWallet.validate(data, {
@@ -57,39 +72,40 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
         await api.post('/wallets', data);
 
         formRef.current?.reset();
-        toast.success('Wallet successfully created');
+        toast({
+          title: 'A new wallet has been successfully created!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
 
         if (onSuccess) {
           onSuccess();
         }
       } catch (err) {
-        handleErrors(err, formRef);
+        handleErrors('Error when creating a new wallet', err, formRef);
       } finally {
-        setLoading(false);
+        setLoadingCreateWallet(false);
       }
     },
-    [formRef, onSuccess],
+    [formRef, onSuccess, handleErrors, toast],
   );
 
   useEffect(() => {
-    api
-      .get('/currencies')
-      .then(response => {
-        setCurrencies(response.data);
-      })
-      .catch(err => {
-        handleErrors(err);
-      });
-  }, []);
+    fetchCurrencies();
+  }, [fetchCurrencies]);
 
   return (
     <Box w="100%">
       <Form ref={formRef} onSubmit={handleCreateWallet}>
-        <Select
-          name="currency_id"
-          placeholder="Select a currency"
-          options={currenciesOptions}
-        />
+        <Skeleton isLoaded={!loadingFetchCurrencies}>
+          <Select
+            name="currency_id"
+            placeholder="Select a currency"
+            options={currenciesOptions}
+          />
+        </Skeleton>
         <Input
           name="alias"
           type="text"
@@ -100,7 +116,7 @@ const CreateWalletForm: React.FC<IProps> = ({ onSuccess }) => {
           type="number"
           placeholder="Type an optional initial balance"
         />
-        <Button isLoading={loading} type="submit" isPrimary>
+        <Button isLoading={loadingCreateWallet} type="submit" isPrimary>
           Create
         </Button>
       </Form>
