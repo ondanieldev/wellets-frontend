@@ -55,6 +55,7 @@ const Input: React.FC<IProps> = ({ name, label, helper, type, ...rest }) => {
           ref={inputRef}
           type={inputType}
           defaultValue={defaultValue}
+          step={type === 'number' ? '0.000000000000001' : ''}
           {...rest}
         />
         {type === 'password' && error && (
