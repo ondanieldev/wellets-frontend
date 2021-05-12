@@ -41,6 +41,7 @@ const TransfersHistory: React.FC<IProps> = ({ walletId, updateTransfers }) => {
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line
   }, [limit, page, walletId, updateTransfers, handleErrors]);
 
   useEffect(() => {

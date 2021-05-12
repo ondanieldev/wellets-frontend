@@ -44,6 +44,7 @@ const TransactionHistory: React.FC<IProps> = ({
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line
   }, [limit, page, walletId, updateTransactions, handleErrors]);
 
   useEffect(() => {
