@@ -51,10 +51,10 @@ const Wallet: React.FC = () => {
   const [loadingFetchCurrencies, setLoadingFetchCurrencies] = useState(false);
 
   const title = useMemo(() => {
-    if (!wallet.alias || !wallet.currency) {
+    if (!wallet || !wallet.currency) {
       return '';
     }
-    return `${wallet.alias} - ${wallet.currency.acronym}`;
+    return `${wallet.alias} - ${wallet.balance} ${wallet.currency.acronym}`;
   }, [wallet]);
 
   const fetchWallet = useCallback(async () => {
