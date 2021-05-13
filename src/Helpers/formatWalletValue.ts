@@ -5,7 +5,7 @@ export default function formatWalletValue(
   wallet?: IWallet,
   currency?: string,
 ): string {
-  const parsedValue = parseInt(value.toString(), 10).toFixed(2);
+  const parsedValue = Number(value.toString()).toFixed(2);
   if (currency) {
     return `${parsedValue} ${currency}`;
   }
