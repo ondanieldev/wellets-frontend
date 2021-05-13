@@ -9,7 +9,9 @@ import {
   useBreakpointValue,
   StackDirection,
   Skeleton,
+  IconButton,
 } from '@chakra-ui/react';
+import { FiRefreshCw } from 'react-icons/fi';
 
 import Button from 'Components/Atoms/Button';
 import Form from 'Components/Atoms/Form';
@@ -164,15 +166,24 @@ const Wallets: React.FC = () => {
         >
           <Flex alignItems="center">
             <Heading size="md" mr="10px">
-              {` You have, approximately, ${totalBalance}`}
+              {`You have, approximately, ${totalBalance}`}
             </Heading>
-            <Form onSubmit={() => {}}>
-              <Select
-                onChange={e => setBaseCurrencyId(e.target.value)}
-                name="base_currency_id"
-                options={currenciesOptions}
-                value={baseCurrencyId}
-              />
+            <Form onSubmit={() => fetchTotalBalance(baseCurrencyId)}>
+              <Stack spacing="10px" direction="row">
+                <Select
+                  onChange={e => setBaseCurrencyId(e.target.value)}
+                  name="base_currency_id"
+                  options={currenciesOptions}
+                  defaultValue={baseCurrencyId}
+                />
+                <IconButton
+                  type="submit"
+                  colorScheme="green"
+                  variant="outline"
+                  aria-label="Refresh"
+                  icon={<FiRefreshCw />}
+                />
+              </Stack>
             </Form>
           </Flex>
         </Skeleton>
