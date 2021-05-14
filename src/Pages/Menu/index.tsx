@@ -63,7 +63,7 @@ const Menu: React.FC = () => {
             items={['Check our roadmap and help us to unlock this character']}
             palette={['#9F7AEA', '#B794F4', '#805AD5', '#9F7AEA']}
             title="Coming soon"
-            link="/"
+            link="https://www.notion.so/Wellets-public-roadmap-d5e4445d9cc0441694c246904979e5bb"
           />
         </Grid>
       </ContentContainer>
