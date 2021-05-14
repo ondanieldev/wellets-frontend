@@ -1,6 +1,18 @@
 {
-  "name": "espec-react-template",
-  "version": "0.1.0",
+  "name": "wellets-frontend",
+  "version": "1.1.0",
+  "author": {
+    "email": "me@ondaniel.com.br",
+    "name": "Daniel Oliveira",
+    "url": "https://homepages.dcc.ufmg.br/~oliveiradaniel/"
+  },
+  "description": "Manage your money placed in different portfolios.",
+  "homepage": "https://wellets.ondaniel.com.br/menu",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/stemDaniel/wellets-frontend",
+    "type": "git"
+  },
   "private": true,
   "dependencies": {
     "@chakra-ui/react": "^1.4.2",
