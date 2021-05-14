@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
+  Box,
   Button as BaseButton,
   ButtonProps,
   Popover,
@@ -14,6 +15,8 @@ import {
 
 interface IProps extends ButtonProps {
   isPrimary?: boolean;
+  isDanger?: boolean;
+  colorSchema?: string;
   confirmation?: {
     body: string;
     buttonText: string;
@@ -23,16 +26,25 @@ interface IProps extends ButtonProps {
 
 const Button: React.FC<IProps> = ({
   isPrimary,
+  isDanger,
+  colorSchema,
   confirmation,
   onClick,
   ...rest
 }) => {
+  const color = useMemo(() => {
+    if (colorSchema && isPrimary) return colorSchema;
+    if (isPrimary) return 'green';
+    if (isDanger) return 'red';
+    return 'white';
+  }, [colorSchema, isPrimary, isDanger]);
+
   return (
     <Popover>
       <PopoverTrigger>
         <BaseButton
           variant="outline"
-          colorScheme={isPrimary ? 'green' : 'white'}
+          colorScheme={color}
           loadingText="Loading"
           onClick={confirmation ? () => {} : onClick}
           {...rest}
@@ -44,7 +56,7 @@ const Button: React.FC<IProps> = ({
             <PopoverArrow />
             <PopoverCloseButton />
             <PopoverBody>
-              {confirmation.body}
+              <Box>{confirmation.body}</Box>
               <BaseButton
                 mt="10px"
                 onClick={onClick}

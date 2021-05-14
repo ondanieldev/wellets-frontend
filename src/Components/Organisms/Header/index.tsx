@@ -16,7 +16,11 @@ import { useHistory } from 'react-router-dom';
 
 import { useAuth } from 'Hooks/auth';
 
-const Header: React.FC = () => {
+interface IProps {
+  color?: string;
+}
+
+const Header: React.FC<IProps> = ({ color }) => {
   const history = useHistory();
   const { user, signOut } = useAuth();
 
@@ -33,14 +37,14 @@ const Header: React.FC = () => {
       bg="gray.900"
       p="10px"
       borderBottom="2px solid"
-      borderColor="green.300"
+      borderColor={`${color || 'green'}.300`}
     >
       <Center>
         <Icon
           as={FiArrowLeft}
           w={30}
           h={30}
-          color="green.300"
+          color={`${color || 'green'}.300`}
           mr="10px"
           cursor="pointer"
           onClick={handleBackward}
@@ -48,7 +52,10 @@ const Header: React.FC = () => {
         {user && (
           <Menu>
             <MenuButton>
-              <Avatar icon={<FiUser size={35} />} bg="green.300" />
+              <Avatar
+                icon={<FiUser size={35} />}
+                bg={`${color || 'green'}.300`}
+              />
             </MenuButton>
             <MenuList>
               <LinkBox>
@@ -69,7 +76,7 @@ const Header: React.FC = () => {
           as={FiArrowRight}
           w={30}
           h={30}
-          color="green.300"
+          color={`${color || 'green'}.300`}
           ml="10px"
           cursor="pointer"
           onClick={handleForward}
