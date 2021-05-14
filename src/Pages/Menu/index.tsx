@@ -3,6 +3,7 @@ import { Grid, useBreakpointValue } from '@chakra-ui/react';
 
 import Wallet from 'Assets/Icons/Wallet';
 import Unknown from 'Assets/Icons/Unknown';
+import Bitcoin from 'Assets/Icons/Bitcoin';
 
 import PageContainer from 'Components/Atoms/PageContainer';
 import ContentContainer from 'Components/Atoms/ContentContainer';
@@ -32,17 +33,22 @@ const Menu: React.FC = () => {
           h="100%"
         >
           <MenuItem
-            icon={Unknown}
-            items={['Check our roadmap and help us to unlock this character']}
+            icon={Bitcoin}
+            items={[
+              'Create a new custom currency',
+              'View your custom currencies',
+              'Manage your custom currencies',
+            ]}
             palette={['#4299E1', '#63B3ED', '#3182CE', '#4299E1']}
-            title="Coming soon"
-            link="/"
+            title="Currencies"
+            link="/currencies"
           />
           <MenuItem
             icon={Wallet}
             items={[
               'Create a new wallet',
               'View your wallets',
+              'Manage your wallets',
               'Create transactions',
               'View your transaction history',
               'Create transafers',
