@@ -7,10 +7,10 @@
     "url": "https://homepages.dcc.ufmg.br/~oliveiradaniel/"
   },
   "description": "Manage your money placed in different portfolios.",
-  "homepage": "https://wellets.ondaniel.com.br/menu",
+  "homepage": "https://wellets.ondaniel.com.br/",
   "license": "MIT",
   "repository": {
-    "url": "https://github.com/stemDaniel/wellets-frontend",
+    "url": "https://github.com/stemDaniel/wellets-frontend/",
     "type": "git"
   },
   "private": true,
