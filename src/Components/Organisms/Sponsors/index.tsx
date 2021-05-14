@@ -30,7 +30,7 @@ const Sponsors: React.FC = () => {
             Wellets
           </Heading>
           <Heading color="gray.700" size="md">
-            v1.0
+            v1.1
           </Heading>
         </Flex>
 
