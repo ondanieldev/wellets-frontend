@@ -12,6 +12,7 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 import { FiRefreshCw } from 'react-icons/fi';
+import { useHistory } from 'react-router-dom';
 
 import Button from 'Components/Atoms/Button';
 import Form from 'Components/Atoms/Form';
@@ -33,6 +34,7 @@ import api from 'Services/api';
 
 const Wallets: React.FC = () => {
   const { handleErrors } = useErrors();
+  const history = useHistory();
 
   const toast = useToast();
   const stack = useBreakpointValue({
@@ -129,7 +131,7 @@ const Wallets: React.FC = () => {
             base_currency_id: id,
           },
         });
-        setTotalBalance(response.data.total_balance.toFixed(8));
+        setTotalBalance(response.data.total_balance);
         setLoadingFetchTotalBalance(false);
       } catch (err) {
         handleErrors('Error when calculating total balance', err);
@@ -140,8 +142,12 @@ const Wallets: React.FC = () => {
 
   useEffect(() => {
     fetchWallets();
+    // eslint-disable-next-line
+  }, [fetchWallets, history]);
+
+  useEffect(() => {
     fetchCurrencies();
-  }, [fetchWallets, fetchCurrencies]);
+  }, [fetchCurrencies]);
 
   useEffect(() => {
     if (!baseCurrencyId) {

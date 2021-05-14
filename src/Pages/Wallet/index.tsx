@@ -54,7 +54,7 @@ const Wallet: React.FC = () => {
     if (!wallet || !wallet.currency) {
       return '';
     }
-    return `${wallet.alias} - ${wallet.balance} ${wallet.currency.acronym}`;
+    return `${wallet.alias} - ${wallet.currency.acronym} ${wallet.balance}`;
   }, [wallet]);
 
   const fetchWallet = useCallback(async () => {
@@ -82,8 +82,11 @@ const Wallet: React.FC = () => {
 
   useEffect(() => {
     fetchWallet();
+  }, [fetchWallet]);
+
+  useEffect(() => {
     fetchCurrencies();
-  }, [fetchWallet, fetchCurrencies]);
+  }, [fetchCurrencies]);
 
   return (
     <PageContainer>
@@ -109,9 +112,10 @@ const Wallet: React.FC = () => {
                   <CreateTransactionForm
                     wallet={wallet}
                     currencies={currencies}
-                    onSuccess={() =>
-                      setUpdateTransactions(updateTransactions + 1)
-                    }
+                    onSuccess={() => {
+                      setUpdateTransactions(updateTransactions + 1);
+                      fetchWallet();
+                    }}
                   />
                 </Stack>
               </TabPanel>
@@ -124,7 +128,10 @@ const Wallet: React.FC = () => {
                   <CreateTransferForm
                     wallet={wallet}
                     currencies={currencies}
-                    onSuccess={() => setUpdateTransfers(updateTransfers + 1)}
+                    onSuccess={() => {
+                      setUpdateTransfers(updateTransfers + 1);
+                      fetchWallet();
+                    }}
                   />
                 </Stack>
               </TabPanel>

@@ -45,9 +45,9 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
         });
 
         if (isUpdate) {
-          await api.put(`/currencies/${currentCurrency.id}`, data);
+          await api.put(`/currencies/custom/${currentCurrency.id}`, data);
         } else {
-          await api.post('/currencies', data);
+          await api.post('/currencies/custom', data);
         }
 
         formRef.current?.reset();

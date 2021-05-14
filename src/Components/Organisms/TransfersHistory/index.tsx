@@ -90,7 +90,7 @@ const TransfersHistory: React.FC<IProps> = ({ walletId, updateTransfers }) => {
             render(transfer: ITransfer) {
               const currency = transfer.to_wallet.currency.acronym;
               const { filled } = transfer;
-              return `${Number(filled).toFixed(2)} ${currency}`;
+              return `${Number(filled)} ${currency}`;
             },
           },
           {

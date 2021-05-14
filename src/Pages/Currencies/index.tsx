@@ -43,7 +43,7 @@ const Currencies: React.FC = () => {
   const fetchCurrencies = useCallback(async () => {
     try {
       setLoadingFetchCurrencies(true);
-      const response = await api.get('/currencies');
+      const response = await api.get('/currencies/custom');
       setCurrencies(response.data);
     } catch (err) {
       handleErrors('Error when fetching currencies', err);
@@ -56,7 +56,7 @@ const Currencies: React.FC = () => {
     async (id: string) => {
       try {
         setLoadingDeleteCurrency(true);
-        await api.delete(`currencies/${id}`);
+        await api.delete(`/currencies/custom/${id}`);
         toast({
           title: 'Currency deleted',
           description: 'Your currency was successfully deleted',
