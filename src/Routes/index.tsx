@@ -7,6 +7,7 @@ import Sign from 'Pages/Sign';
 import Menu from 'Pages/Menu';
 import Wallets from 'Pages/Wallets';
 import Wallet from 'Pages/Wallet';
+import Currencies from 'Pages/Currencies';
 
 const Routes: React.FC = () => {
   return (
@@ -17,6 +18,8 @@ const Routes: React.FC = () => {
 
       <Route exact path="/wallets" component={Wallets} isPrivate />
       <Route path="/wallets/:id" component={Wallet} isPrivate />
+
+      <Route path="/currencies" component={Currencies} isPrivate />
 
       <Redirect from="*" to="/" />
     </Switch>
