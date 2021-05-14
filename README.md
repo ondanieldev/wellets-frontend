@@ -57,7 +57,7 @@ If [Wellets](https://wellets.ondaniel.com.br/) currently does not have a certain
 
 2. You can serve the `build` using any cli server like [forever](https://www.npmjs.com/package/forever)
 
-## Contributing
+## How to contribute
 
 If you want to contribute with me to improve it and add new features, you can contact me by any contact method listed in my [Github Profile](https://github.com/stemDaniel).
 
