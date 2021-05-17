@@ -44,6 +44,8 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
           abortEarly: false,
         });
 
+        data.dollar_rate = 1 / data.dollar_rate;
+
         if (isUpdate) {
           await api.put(`/currencies/custom/${currentCurrency.id}`, data);
         } else {
@@ -88,7 +90,12 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
       >
         <Input name="acronym" type="text" placeholder="3 or 4 letter acronym" />
         <Input name="alias" type="text" placeholder="Alias" />
-        <Input name="dollar_rate" type="number" placeholder="Dollar rate" />
+        <Input
+          name="dollar_rate"
+          type="number"
+          placeholder="Dollar rate"
+          helper="1 unity of your currency equals ? USD"
+        />
         <Input
           name="format"
           type="text"

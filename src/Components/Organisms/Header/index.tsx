@@ -68,6 +68,11 @@ const Header: React.FC<IProps> = ({ color }) => {
                   <LinkOverlay href="/wallets">Wallets</LinkOverlay>
                 </MenuItem>
               </LinkBox>
+              <LinkBox>
+                <MenuItem>
+                  <LinkOverlay href="/currencies">Currencies</LinkOverlay>
+                </MenuItem>
+              </LinkBox>
               <MenuItem onClick={signOut}>Log out</MenuItem>
             </MenuList>
           </Menu>
