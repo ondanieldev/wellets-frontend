@@ -21,10 +21,14 @@
 ## Introduction
 
 [Wellets](https://wellets.ondaniel.com.br/) is a financial management website that helps users to manage their money placed in multiple portfolios.
-It was developed with a focus on users engaged in the crypto world. Theses users usually have money on their bank accounts, exchanges, blockchain wallets and stuff like that. As there are a lots of places to put their money, it is easy to gets confused with their own money.
+It was developed with a focus on users engaged in the crypto world. These users usually have money on their bank accounts, exchanges, blockchain wallets and stuff like that. As there are a lots of places to put their money, it is easy to gets confused with their own money.
 To avoid that, [Wellets](https://wellets.ondaniel.com.br/) currently provide wallet and currency management features to help users control their money with more accurately.
 
 ADVICE: [Wellets](https://wellets.ondaniel.com.br/) does not have any type of integration with bank accounts or blockchain wallets, all management is done manually. The benefit of using this is the user experience and practicality, but the user needs to specify their transfers and transactions to see the power of the application.
+
+## Back-end
+
+This repository contains the code related to [Wellets Front-end](https://github.com/stemDaniel/wellets-frontend). If you want to see the back-end repository, please check [Wellets Back-end](https://github.com/stemDaniel/wellets-backend).
 
 ## Features
 
