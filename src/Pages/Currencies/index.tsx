@@ -148,8 +148,8 @@ const Currencies: React.FC = () => {
 
           <UpsertCurrencyForm
             onSuccess={() => {
-              fetchCurrencies();
               setCurrentCurrency({} as ICurrency);
+              fetchCurrencies();
             }}
             currentCurrency={currentCurrency}
             onCancelUpdate={() => setCurrentCurrency({} as ICurrency)}

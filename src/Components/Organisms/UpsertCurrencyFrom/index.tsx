@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { FormHandles } from '@unform/core';
 import { Box, Stack, useToast } from '@chakra-ui/react';
 
@@ -52,7 +52,6 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
           await api.post('/currencies/custom', data);
         }
 
-        formRef.current?.reset();
         toast({
           title: isUpdate
             ? 'Your currency was successfully updated!'
@@ -81,13 +80,17 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
     [formRef, onSuccess, handleErrors, toast, currentCurrency],
   );
 
+  useEffect(() => {
+    if (currentCurrency.id) {
+      formRef.current?.setData(currentCurrency);
+      return;
+    }
+    formRef.current?.reset();
+  }, [currentCurrency]);
+
   return (
     <Box w="100%">
-      <Form
-        ref={formRef}
-        onSubmit={handleUpsertCurrency}
-        initialData={currentCurrency}
-      >
+      <Form ref={formRef} onSubmit={handleUpsertCurrency}>
         <Input name="acronym" type="text" placeholder="3 or 4 letter acronym" />
         <Input name="alias" type="text" placeholder="Alias" />
         <Input
