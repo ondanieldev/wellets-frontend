@@ -39,6 +39,22 @@ const Currencies: React.FC = () => {
   const [loadingDeleteCurrency, setLoadingDeleteCurrency] = useState(false);
   const [loadingFetchCurrencies, setLoadingFetchCurrencies] = useState(false);
   const [currentCurrency, setCurrentCurrency] = useState({} as ICurrency);
+  const [loadingFetchAllCurrencies, setLoadingFetchAllCurrencies] = useState(
+    false,
+  );
+  const [allCurrencies, setAllCurrencies] = useState([] as ICurrency[]);
+
+  const fetchAllCurrencies = useCallback(async () => {
+    try {
+      setLoadingFetchAllCurrencies(true);
+      const response = await api.get('/currencies');
+      setAllCurrencies(response.data);
+    } catch (err) {
+      handleErrors('Error when fetching all currencies', err);
+    } finally {
+      setLoadingFetchAllCurrencies(false);
+    }
+  }, [handleErrors]);
 
   const fetchCurrencies = useCallback(async () => {
     try {
@@ -76,7 +92,8 @@ const Currencies: React.FC = () => {
 
   useEffect(() => {
     fetchCurrencies();
-  }, [fetchCurrencies]);
+    fetchAllCurrencies();
+  }, [fetchCurrencies, fetchAllCurrencies]);
 
   return (
     <PageContainer>
@@ -120,7 +137,12 @@ const Currencies: React.FC = () => {
                       <Flex>
                         <Button
                           type="button"
-                          onClick={() => setCurrentCurrency(currency)}
+                          onClick={() =>
+                            setCurrentCurrency({
+                              ...currency,
+                              dollar_rate: 1 / currency.dollar_rate,
+                            })
+                          }
                           mr="10px"
                         >
                           Edit
@@ -155,6 +177,40 @@ const Currencies: React.FC = () => {
             onCancelUpdate={() => setCurrentCurrency({} as ICurrency)}
           />
         </Stack>
+      </ContentContainer>
+
+      <ContentContainer flexDirection="column" justifyContent="start">
+        <Heading>All Currencies</Heading>
+
+        <Skeleton isLoaded={!loadingFetchAllCurrencies}>
+          <Table
+            rows={allCurrencies}
+            columns={[
+              {
+                title: 'Acronym',
+                key: 'acronym',
+                dataIndex: 'acronym',
+              },
+              {
+                title: 'Alias',
+                key: 'alias',
+                dataIndex: 'alias',
+              },
+              {
+                title: 'Dollar rate',
+                key: 'dollar_rate',
+                render(currency: ICurrency) {
+                  return `USD ${currency.dollar_rate}`;
+                },
+              },
+              {
+                title: 'Format',
+                key: 'format',
+                dataIndex: 'format',
+              },
+            ]}
+          />
+        </Skeleton>
       </ContentContainer>
     </PageContainer>
   );
