@@ -35,11 +35,12 @@ This repository contains the code related to [Wellets Front-end](https://github.
 - Sign up
 - Sign in
 - Sign out
-- Wallet CRUD
+- Wallets CRUD
 - View sum of balances of all wallets on a specific currency
 - Create transactions and transfers
 - View transaction and transfer history
 - Custom currencies CRUD
+- And more!
 
 If [Wellets](https://wellets.ondaniel.com.br/) currently does not have a certain feature you think it is awesome, be sure to check out the [roadmap](https://www.notion.so/Wellets-public-roadmap-d5e4445d9cc0441694c246904979e5bb) to see if this is already planned for the future. Otherwise, you can contact me by any contact method listed in my [Github Profile](https://github.com/stemDaniel) to send your ideas.
 
