@@ -11,20 +11,24 @@ import {
   useBreakpointValue,
   StackDirection,
   Skeleton,
+  Flex,
+  IconButton,
 } from '@chakra-ui/react';
+import { FiRefreshCw } from 'react-icons/fi';
 
 import PageContainer from 'Components/Atoms/PageContainer';
 import ContentContainer from 'Components/Atoms/ContentContainer';
 import Header from 'Components/Organisms/Header';
 import CreateTransactionForm from 'Components/Organisms/CreateTransactionForm';
-
-import api from 'Services/api';
+import Form from 'Components/Atoms/Form';
+import Select, { IOption } from 'Components/Atoms/Select';
 import CreateTransferForm from 'Components/Organisms/CreateTransferForm';
 import TransactionsHistory from 'Components/Organisms/TransactionsHistory';
 import TransfersHistory from 'Components/Organisms/TransfersHistory';
 import IWallet from 'Entities/IWallet';
-import { useErrors } from 'Hooks/errors';
 import ICurrency from 'Entities/ICurrency';
+import api from 'Services/api';
+import { useErrors } from 'Hooks/errors';
 
 interface IParams {
   id: string;
@@ -49,13 +53,18 @@ const Wallet: React.FC = () => {
   const [updateTransfers, setUpdateTransfers] = useState(0);
   const [loadingFetchWallet, setLoadingFetchWallet] = useState(false);
   const [loadingFetchCurrencies, setLoadingFetchCurrencies] = useState(false);
+  const [loadingFetchBalance, setLoadingFetchBalance] = useState(false);
+  const [targetCurrencyId, setTargetCurrencyId] = useState('');
+  const [balance, setBalance] = useState(0);
 
-  const title = useMemo(() => {
-    if (!wallet || !wallet.currency) {
-      return '';
-    }
-    return `${wallet.alias} - ${wallet.currency.acronym} ${wallet.balance}`;
-  }, [wallet]);
+  const currenciesOptions = useMemo<IOption[]>(
+    () =>
+      currencies.map(c => ({
+        label: c.acronym,
+        value: c.id,
+      })),
+    [currencies],
+  );
 
   const fetchWallet = useCallback(async () => {
     try {
@@ -80,6 +89,29 @@ const Wallet: React.FC = () => {
     }
   }, [handleErrors]);
 
+  const fetchBalance = useCallback(
+    async (id: string) => {
+      try {
+        setLoadingFetchBalance(true);
+
+        const currency = currencies.find(c => c.id === targetCurrencyId);
+        if (!currency) return;
+
+        const response = await api.get('/wallets/balance', {
+          params: {
+            wallet_id: wallet.id,
+            target_currency: currency.acronym,
+          },
+        });
+        setBalance(response.data.balance);
+        setLoadingFetchBalance(false);
+      } catch (err) {
+        handleErrors('Error when calculating total balance', err);
+      }
+    },
+    [handleErrors, targetCurrencyId, currencies, wallet],
+  );
+
   useEffect(() => {
     fetchWallet();
   }, [fetchWallet]);
@@ -88,13 +120,47 @@ const Wallet: React.FC = () => {
     fetchCurrencies();
   }, [fetchCurrencies]);
 
+  useEffect(() => {
+    if (!targetCurrencyId) {
+      if (!wallet) return;
+      const { currency_id } = wallet;
+      setTargetCurrencyId(currency_id);
+      fetchBalance(currency_id);
+      return;
+    }
+    fetchBalance(targetCurrencyId);
+  }, [fetchBalance, targetCurrencyId, wallet]);
+
   return (
     <PageContainer>
       <Header />
 
       <Skeleton isLoaded={!loadingFetchWallet && !loadingFetchCurrencies}>
         <ContentContainer flexDirection="column" justifyContent="start">
-          {title && <Heading>{title}</Heading>}
+          <Skeleton isLoaded={!loadingFetchCurrencies && !loadingFetchBalance}>
+            <Flex alignItems="center">
+              <Heading size="md" mr="10px">
+                {`${wallet.alias} - ${balance}`}
+              </Heading>
+              <Form onSubmit={() => fetchBalance(targetCurrencyId)}>
+                <Stack spacing="10px" direction="row">
+                  <Select
+                    onChange={e => setTargetCurrencyId(e.target.value)}
+                    name="base_currency_id"
+                    options={currenciesOptions}
+                    defaultValue={targetCurrencyId}
+                  />
+                  <IconButton
+                    type="submit"
+                    colorScheme="green"
+                    variant="outline"
+                    aria-label="Refresh"
+                    icon={<FiRefreshCw />}
+                  />
+                </Stack>
+              </Form>
+            </Flex>
+          </Skeleton>
 
           <Tabs w="100%">
             <TabList>
