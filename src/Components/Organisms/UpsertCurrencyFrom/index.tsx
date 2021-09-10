@@ -34,6 +34,10 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
 
   const handleUpsertCurrency = useCallback(
     async (data: IUpsertCurrencyDTO) => {
+      const preprocess = (x: IUpsertCurrencyDTO) => ({
+        ...x,
+        favorite: x.favorite === 'y',
+      });
       const isUpdate = !!currentCurrency.id;
 
       try {
@@ -47,9 +51,12 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
         data.dollar_rate = 1 / data.dollar_rate;
 
         if (isUpdate) {
-          await api.put(`/currencies/custom/${currentCurrency.id}`, data);
+          await api.put(
+            `/currencies/custom/${currentCurrency.id}`,
+            preprocess(data),
+          );
         } else {
-          await api.post('/currencies/custom', data);
+          await api.post('/currencies/custom', preprocess(data));
         }
 
         toast({
@@ -68,8 +75,8 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
       } catch (err) {
         handleErrors(
           isUpdate
-            ? 'Error when creating a new currency'
-            : 'Error when updating your currency',
+            ? 'Error when updating your currency'
+            : 'Error when creating a new currency',
           err,
           formRef,
         );
@@ -82,7 +89,10 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
 
   useEffect(() => {
     if (currentCurrency.id) {
-      formRef.current?.setData(currentCurrency);
+      formRef.current?.setData({
+        ...currentCurrency,
+        favorite: (currentCurrency.favorite && 'y') || 'n',
+      });
       return;
     }
     formRef.current?.reset();
@@ -104,6 +114,7 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
           type="text"
           placeholder="Display format (like $ 00.00)"
         />
+        <Input name="favorite" type="text" />
         <Stack spacing="10px">
           <Button
             isLoading={loadingUpsertCurrency}
