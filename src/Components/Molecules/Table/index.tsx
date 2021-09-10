@@ -23,7 +23,7 @@ interface IColumn {
   key: string;
   title: string;
   dataIndex?: string;
-  render?(row: IData): any;
+  render?(row: IData, i: number): any;
 }
 
 interface IProps {
@@ -62,7 +62,7 @@ const Table: React.FC<IProps> = ({ columns, rows, pagination }) => {
                   {columns.map(column => (
                     <Td key={column.key}>
                       {column.render
-                        ? column.render(row)
+                        ? column.render(row, index)
                         : column.dataIndex
                         ? row[column.dataIndex]
                         : ''}
