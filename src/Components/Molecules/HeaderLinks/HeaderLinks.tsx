@@ -1,13 +1,13 @@
 import React from 'react';
 
-import NavLink from './NavLink';
+import NavLink from '../../Atoms/NavLink/NavLink';
 
 interface IProps {
   color?: string;
   location?: { pathname: string };
 }
 
-const Links: React.FC<IProps> = props => (
+const HeaderLinks: React.FC<IProps> = props => (
   <>
     <NavLink to="/wallets" {...props}>
       Wallets
@@ -18,4 +18,4 @@ const Links: React.FC<IProps> = props => (
   </>
 );
 
-export default Links;
+export default HeaderLinks;

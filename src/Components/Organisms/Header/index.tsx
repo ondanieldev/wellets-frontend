@@ -20,8 +20,8 @@ import { useHistory } from 'react-router-dom';
 import { FiUser, FiMenu, FiX } from 'react-icons/fi';
 
 import { useAuth } from 'Hooks/auth';
-import NavLink from './NavLink';
-import Links from './Links';
+import NavLink from '../../Atoms/NavLink/NavLink';
+import Links from '../../Molecules/HeaderLinks/HeaderLinks';
 
 interface IProps {
   color?: string;
@@ -44,11 +44,9 @@ const Header: React.FC<IProps> = ({ color }) => {
             onClick={isOpen ? onClose : onOpen}
           />
           <HStack spacing={8} alignItems="center">
-            <Box>
-              <NavLink to="/">
-                <strong>Wellets</strong>
-              </NavLink>
-            </Box>
+            <NavLink to="/">
+              <strong>Wellets</strong>
+            </NavLink>
             <HStack as="nav" spacing={4} display={{ base: 'none', md: 'flex' }}>
               <Links color={color} location={history.location} />
             </HStack>
