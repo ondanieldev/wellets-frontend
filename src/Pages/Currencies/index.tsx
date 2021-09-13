@@ -7,7 +7,10 @@ import {
   useBreakpointValue,
   StackDirection,
   Skeleton,
+  IconButton,
+  Icon,
 } from '@chakra-ui/react';
+import { MdFavorite, MdFavoriteBorder } from 'react-icons/md';
 
 import Button from 'Components/Atoms/Button';
 import PageContainer from 'Components/Atoms/PageContainer';
@@ -38,35 +41,45 @@ const Currencies: React.FC = () => {
   const [currencies, setCurrencies] = useState([] as ICurrency[]);
   const [loadingDeleteCurrency, setLoadingDeleteCurrency] = useState(false);
   const [loadingFetchCurrencies, setLoadingFetchCurrencies] = useState(false);
+  const [
+    loadingMarkAsFavoriteCurrency,
+    setLoadingMarkAsFavoriteCurrency,
+  ] = useState(-1);
   const [currentCurrency, setCurrentCurrency] = useState({} as ICurrency);
   const [loadingFetchAllCurrencies, setLoadingFetchAllCurrencies] = useState(
     false,
   );
   const [allCurrencies, setAllCurrencies] = useState([] as ICurrency[]);
 
-  const fetchAllCurrencies = useCallback(async () => {
-    try {
-      setLoadingFetchAllCurrencies(true);
-      const response = await api.get('/currencies');
-      setAllCurrencies(response.data);
-    } catch (err) {
-      handleErrors('Error when fetching all currencies', err);
-    } finally {
-      setLoadingFetchAllCurrencies(false);
-    }
-  }, [handleErrors]);
+  const fetchAllCurrencies = useCallback(
+    async (loadingEnabled = true) => {
+      try {
+        if (loadingEnabled) setLoadingFetchAllCurrencies(true);
+        const response = await api.get('/currencies?sort_by=acronym');
+        setAllCurrencies(response.data);
+      } catch (err) {
+        handleErrors('Error when fetching all currencies', err);
+      } finally {
+        if (loadingEnabled) setLoadingFetchAllCurrencies(false);
+      }
+    },
+    [handleErrors],
+  );
 
-  const fetchCurrencies = useCallback(async () => {
-    try {
-      setLoadingFetchCurrencies(true);
-      const response = await api.get('/currencies/custom');
-      setCurrencies(response.data);
-    } catch (err) {
-      handleErrors('Error when fetching currencies', err);
-    } finally {
-      setLoadingFetchCurrencies(false);
-    }
-  }, [handleErrors]);
+  const fetchCurrencies = useCallback(
+    async (loadingEnabled = true) => {
+      try {
+        if (loadingEnabled) setLoadingFetchCurrencies(true);
+        const response = await api.get('/currencies/custom');
+        setCurrencies(response.data);
+      } catch (err) {
+        handleErrors('Error when fetching currencies', err);
+      } finally {
+        if (loadingEnabled) setLoadingFetchCurrencies(false);
+      }
+    },
+    [handleErrors],
+  );
 
   const handleDeleteCurrency = useCallback(
     async (id: string) => {
@@ -88,6 +101,21 @@ const Currencies: React.FC = () => {
       }
     },
     [toast, handleErrors, fetchCurrencies],
+  );
+
+  const handleToggleFavoriteCurrency = useCallback(
+    async (index: number, id: string, favorite: boolean) => {
+      try {
+        setLoadingMarkAsFavoriteCurrency(index);
+        await api.put(`/currencies/${id}`, { favorite });
+        fetchAllCurrencies(false);
+      } catch (err) {
+        handleErrors('Error when toggling favorite currency', err);
+      } finally {
+        setLoadingMarkAsFavoriteCurrency(-1);
+      }
+    },
+    [handleErrors, fetchAllCurrencies],
   );
 
   useEffect(() => {
@@ -171,7 +199,8 @@ const Currencies: React.FC = () => {
           <UpsertCurrencyForm
             onSuccess={() => {
               setCurrentCurrency({} as ICurrency);
-              fetchCurrencies();
+              fetchCurrencies(false);
+              fetchAllCurrencies(false);
             }}
             currentCurrency={currentCurrency}
             onCancelUpdate={() => setCurrentCurrency({} as ICurrency)}
@@ -207,6 +236,33 @@ const Currencies: React.FC = () => {
                 title: 'Format',
                 key: 'format',
                 dataIndex: 'format',
+              },
+              {
+                title: 'Actions',
+                key: 'actions',
+                render(currency: ICurrency, index: number) {
+                  return (
+                    <IconButton
+                      size="md"
+                      icon={
+                        currency.favorite ? (
+                          <Icon as={MdFavorite} />
+                        ) : (
+                          <Icon as={MdFavoriteBorder} />
+                        )
+                      }
+                      aria-label="Mark as favorite"
+                      isLoading={loadingMarkAsFavoriteCurrency === index}
+                      onClick={() =>
+                        handleToggleFavoriteCurrency(
+                          index,
+                          currency.id,
+                          !currency.favorite,
+                        )
+                      }
+                    />
+                  );
+                },
               },
             ]}
           />
