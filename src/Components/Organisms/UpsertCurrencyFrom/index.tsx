@@ -92,7 +92,7 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
     if (currentCurrency.id) {
       formRef.current?.setData({
         ...currentCurrency,
-        favorite: (currentCurrency.favorite && 'y') || 'n',
+        favorite: currentCurrency.favorite ? 'true' : 'false',
       });
       return;
     }
