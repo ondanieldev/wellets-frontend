@@ -8,5 +8,7 @@ export default Yup.object().shape({
     .positive('rate must be positive')
     .required('rate required'),
   format: Yup.string().required('format required'),
-  favorite: Yup.string().is(['y', 'n']).required('favorite required'),
+  favorite: Yup.boolean()
+    .typeError('favorite required')
+    .required('favorite required'),
 });

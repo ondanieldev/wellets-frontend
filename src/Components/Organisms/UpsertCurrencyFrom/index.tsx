@@ -4,6 +4,7 @@ import { Box, Stack, useToast } from '@chakra-ui/react';
 
 import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
+import Radio from 'Components/Atoms/Radio';
 import Button from 'Components/Atoms/Button';
 
 import { useErrors } from 'Hooks/errors';
@@ -36,7 +37,7 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
     async (data: IUpsertCurrencyDTO) => {
       const preprocess = (x: IUpsertCurrencyDTO) => ({
         ...x,
-        favorite: x.favorite === 'y',
+        favorite: x.favorite === 'true',
       });
       const isUpdate = !!currentCurrency.id;
 
@@ -114,7 +115,13 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
           type="text"
           placeholder="Display format (like $ 00.00)"
         />
-        <Input name="favorite" type="text" />
+        <Radio
+          name="favorite"
+          options={[
+            { id: 'true', value: 'true', label: 'Is favorite' },
+            { id: 'false', value: 'false', label: 'Is not favorite' },
+          ]}
+        />
         <Stack spacing="10px">
           <Button
             isLoading={loadingUpsertCurrency}
