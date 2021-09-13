@@ -4,6 +4,7 @@ import { Box, Stack, useToast } from '@chakra-ui/react';
 
 import Form from 'Components/Atoms/Form';
 import Input from 'Components/Atoms/Input';
+import Radio from 'Components/Atoms/Radio';
 import Button from 'Components/Atoms/Button';
 
 import { useErrors } from 'Hooks/errors';
@@ -34,6 +35,10 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
 
   const handleUpsertCurrency = useCallback(
     async (data: IUpsertCurrencyDTO) => {
+      const preprocess = (x: IUpsertCurrencyDTO) => ({
+        ...x,
+        favorite: x.favorite === 'true',
+      });
       const isUpdate = !!currentCurrency.id;
 
       try {
@@ -47,9 +52,12 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
         data.dollar_rate = 1 / data.dollar_rate;
 
         if (isUpdate) {
-          await api.put(`/currencies/custom/${currentCurrency.id}`, data);
+          await api.put(
+            `/currencies/custom/${currentCurrency.id}`,
+            preprocess(data),
+          );
         } else {
-          await api.post('/currencies/custom', data);
+          await api.post('/currencies/custom', preprocess(data));
         }
 
         toast({
@@ -68,8 +76,8 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
       } catch (err) {
         handleErrors(
           isUpdate
-            ? 'Error when creating a new currency'
-            : 'Error when updating your currency',
+            ? 'Error when updating your currency'
+            : 'Error when creating a new currency',
           err,
           formRef,
         );
@@ -82,7 +90,10 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
 
   useEffect(() => {
     if (currentCurrency.id) {
-      formRef.current?.setData(currentCurrency);
+      formRef.current?.setData({
+        ...currentCurrency,
+        favorite: currentCurrency.favorite ? 'true' : 'false',
+      });
       return;
     }
     formRef.current?.reset();
@@ -103,6 +114,13 @@ const UpsertCurrencyForm: React.FC<IProps> = ({
           name="format"
           type="text"
           placeholder="Display format (like $ 00.00)"
+        />
+        <Radio
+          name="favorite"
+          options={[
+            { id: 'true', value: 'true', label: 'Is favorite' },
+            { id: 'false', value: 'false', label: 'Is not favorite' },
+          ]}
         />
         <Stack spacing="10px">
           <Button

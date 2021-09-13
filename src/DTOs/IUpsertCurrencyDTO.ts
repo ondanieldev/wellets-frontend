@@ -4,6 +4,7 @@ interface IUpsertCurrencyDTO {
   dollar_rate: number;
   format: string;
   id?: string;
+  favorite?: string;
 }
 
 export default IUpsertCurrencyDTO;

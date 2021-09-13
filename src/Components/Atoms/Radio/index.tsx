@@ -11,7 +11,6 @@ import InputError from '../InputError';
 
 interface IProps {
   name: string;
-  label?: string;
   options: {
     id: string;
     value: string;
@@ -24,7 +23,6 @@ type IRadioProps = RadioProps & IProps;
 
 const Radio: React.FC<IRadioProps> = ({
   name,
-  label,
   options,
   direction,
   ...rest
@@ -52,6 +50,10 @@ const Radio: React.FC<IRadioProps> = ({
       clearValue(ref) {
         ref.value = '';
         setValue('');
+      },
+      setValue(ref, newValue: string) {
+        ref.value = newValue;
+        setValue(newValue);
       },
     });
   }, [fieldName, registerField, inputRef]);

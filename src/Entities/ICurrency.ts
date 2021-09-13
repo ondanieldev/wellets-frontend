@@ -6,6 +6,7 @@ interface ICurrency {
   alias: string;
   format: string;
   dollar_rate: number;
+  favorite: boolean;
   created_at: Date;
   updated_at: Date;
   wallets: IWallet[];
