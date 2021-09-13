@@ -55,7 +55,7 @@ const Currencies: React.FC = () => {
     async (loadingEnabled = true) => {
       try {
         if (loadingEnabled) setLoadingFetchAllCurrencies(true);
-        const response = await api.get('/currencies?sortBy=acronym');
+        const response = await api.get('/currencies?sort_by=acronym');
         setAllCurrencies(response.data);
       } catch (err) {
         handleErrors('Error when fetching all currencies', err);
