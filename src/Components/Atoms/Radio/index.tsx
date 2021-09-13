@@ -51,6 +51,10 @@ const Radio: React.FC<IRadioProps> = ({
         ref.value = '';
         setValue('');
       },
+      setValue(ref, newValue: string) {
+        ref.value = newValue;
+        setValue(newValue);
+      },
     });
   }, [fieldName, registerField, inputRef]);
 
