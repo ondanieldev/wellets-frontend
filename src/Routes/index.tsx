@@ -8,6 +8,7 @@ import Menu from 'Pages/Menu';
 import Wallets from 'Pages/Wallets';
 import Wallet from 'Pages/Wallet';
 import Currencies from 'Pages/Currencies';
+import Settings from 'Pages/Settings';
 
 const Routes: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ const Routes: React.FC = () => {
       <Route path="/" exact component={Sign} />
 
       <Route path="/menu" component={Menu} isPrivate />
+      <Route path="/settings" component={Settings} isPrivate />
 
       <Route exact path="/wallets" component={Wallets} isPrivate />
       <Route path="/wallets/:id" component={Wallet} isPrivate />

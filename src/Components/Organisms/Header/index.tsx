@@ -64,6 +64,9 @@ const Header: React.FC<IProps> = ({ color }) => {
               </MenuButton>
               <MenuList>
                 <MenuItem isDisabled>Profile</MenuItem>
+                <MenuItem onClick={() => history.push('/settings')}>
+                  Settings
+                </MenuItem>
                 <MenuDivider />
                 <MenuItem onClick={signOut}>Log out</MenuItem>
               </MenuList>
