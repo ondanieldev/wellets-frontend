@@ -56,6 +56,9 @@ const Wallets: React.FC = () => {
   const [loadingFetchTotalBalance, setLoadingFetchTotalBalance] = useState(
     false,
   );
+  const [loadingFetchUserSettings, setLoadingFetchUserSettings] = useState(
+    false,
+  );
   const [baseCurrencyId, setBaseCurrencyId] = useState('');
   const [totalBalance, setTotalBalance] = useState(0);
 
@@ -150,14 +153,25 @@ const Wallets: React.FC = () => {
   }, [fetchCurrencies]);
 
   useEffect(() => {
-    if (!baseCurrencyId) {
-      if (!wallets[0]) return;
-      const { currency_id } = wallets[0];
-      setBaseCurrencyId(currency_id);
-      fetchTotalBalance(currency_id);
-      return;
-    }
-    fetchTotalBalance(baseCurrencyId);
+    (async () => {
+      try {
+        setLoadingFetchUserSettings(true);
+        const response = await api.get('/users/settings');
+        setBaseCurrencyId(response.data.currency_id);
+      } catch (err) {
+        // fail silently, proceed with default
+      } finally {
+        setLoadingFetchUserSettings(false);
+      }
+      if (!baseCurrencyId) {
+        if (!wallets[0]) return;
+        const { currency_id } = wallets[0];
+        setBaseCurrencyId(currency_id);
+        fetchTotalBalance(currency_id);
+        return;
+      }
+      await fetchTotalBalance(baseCurrencyId);
+    })();
   }, [fetchTotalBalance, baseCurrencyId, wallets]);
 
   return (
@@ -168,7 +182,11 @@ const Wallets: React.FC = () => {
         <Heading>Wallets</Heading>
 
         <Skeleton
-          isLoaded={!loadingFetchCurrencies && !loadingFetchTotalBalance}
+          isLoaded={
+            !loadingFetchCurrencies &&
+            !loadingFetchTotalBalance &&
+            !loadingFetchUserSettings
+          }
         >
           <Flex alignItems="center">
             <Heading size="md" mr="10px">
